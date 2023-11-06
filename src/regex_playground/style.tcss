@@ -3,19 +3,19 @@
 # ----------
 
 ExpressionContainer {
-  margin: 1;
   height: auto;
+  margin: 1;
 }
 
 TextInput {
-  margin: 0 1;
   height: 10;
+  margin: 0 1;
 }
 
 Flags {
+  height: auto;
   margin: 1 0;
   padding-left: 2;
-  height: auto;
 }
 
 Flags > Static {
@@ -40,13 +40,74 @@ Flag.-inactive {
 # ------------
 
 SubstitutionContainer {
-  margin: 1;
   height: auto;
+  margin: 1;
 }
 
 TextResult {
-  margin: 1 1;
   height: 10;
+  margin: 1 1;
+}
+
+# -----------
+# ABOUT MODAL
+# -----------
+AboutModal {
+  align: center middle;
+}
+
+AboutModal Center {
+  width: 100%;
+}
+
+AboutModal > Vertical {
+  background: $boost;
+  border: thick $primary 50%;
+  height: auto;
+  min-width: 30%;
+  width: auto;
+}
+
+AboutModal Static {
+  width: auto;
+}
+
+AboutModal Static#app, Static#message {
+  padding: 1 4;
+}
+
+AboutModal #message {
+  min-width: 100%;
+}
+
+AboutModal Button {
+  margin: 1;
+}
+
+
+# ----------
+# HELP MODAL
+# ----------
+
+HelpModal {
+  align: center middle;
+}
+
+HelpModal > Vertical {
+  background: $boost;
+  border: thick $primary 50%;
+  height: 80%;
+  width: 80%;
+}
+
+HelpModal > Vertical > VerticalScroll {
+  height: 1fr;
+  margin: 1 2;
+}
+
+HelpModal > Vertical > Center {
+  height: auto;
+  padding: 1;
 }
 
 # ----------
@@ -58,28 +119,28 @@ SaveModal {
 }
 
 SaveModal #dialog {
-  grid-size: 2;
+  background: $boost;
+  border: thick $primary 50%;
   grid-gutter: 1 2;
   grid-rows: 1fr 3;
-  padding: 0 1;
-  width: 60;
+  grid-size: 2;
   height: 12;
-  border: thick $background 80%;
-  background: $surface;
+  padding: 0 1;
+  width: 50%;
 }
 
 SaveModal #title {
   column-span: 2;
+  content-align: center middle;
   height: 1;
   width: 1fr;
-  content-align: center middle;
 }
 
 SaveModal Input {
   column-span: 2;
+  content-align: center middle;
   height: 1fr;
   width: 1fr;
-  content-align: center middle;
 }
 
 SaveModal Button {

@@ -32,11 +32,12 @@ class TextInput(TextArea):
         highlights.clear()
         self.refresh()
 
-    def apply_highlighting(self, regex_str: str) -> None:
+    def apply_highlighting(self, regex_str: str, global_match: bool) -> None:
         """Apply highlighting to RegEx matches inside of the TextArea.
 
         Args:
             regex_str: RegEx string.
+            global_match: Should all matches be highlighted.
         """
 
         def convert_match_to_faux_node(match: re.Match[str]) -> ReNode:
@@ -87,7 +88,11 @@ class TextInput(TextArea):
         text = self.text
         matches = re.finditer(pattern, text)
 
+        counter = 0
         for match in matches:
+            if not global_match and counter >= 1:
+                break
+            counter += 1
             node = convert_match_to_faux_node(match=match)
             node_start_row, node_start_column = node.start_point
             node_end_row, node_end_column = node.end_point

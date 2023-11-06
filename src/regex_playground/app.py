@@ -1,6 +1,7 @@
+import webbrowser
 from pathlib import Path
 
-from textual import on, work
+from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.events import Ready
@@ -8,7 +9,7 @@ from textual.reactive import reactive
 from textual.widgets import Footer, Header, Rule
 
 from .expression import ExpressionContainer, Flags, RegexInput
-from .screens import SaveModal
+from .screens import AboutModal, HelpModal
 from .substitution import SubstitutionContainer, SubstitutionInput
 from .text_inputs import TextInput, TextResult
 
@@ -19,13 +20,14 @@ class RegexPlayground(App[int]):
     TITLE = "Python RegEx Playground"
     CSS_PATH = Path(__file__).parent.joinpath("style.tcss")
     BINDINGS = [
-        Binding("ctrl+c", "exit_app", "Quit", show=True),
-        Binding("ctrl+s", "save", "Save Result", show=True),
-        Binding("ctrl+h", "help", "Help", show=True),
+        Binding("f1", "help", "Help"),
+        Binding("f2", "about", "About"),
+        Binding("ctrl+q", "app.quit", "Quit"),
     ]
 
     regex: reactive[str] = reactive("", init=False)
     substitution: reactive[str] = reactive("", init=False)
+    global_match: reactive[bool] = reactive(True, init=False)
 
     def __init__(self, *args, **kwargs):
         """Initialise the application."""
@@ -65,7 +67,7 @@ class RegexPlayground(App[int]):
         self.load_text(text)
 
     @on(Ready)
-    def load_text_input_and_focus(self) -> None:
+    def set_proper_focus(self) -> None:
         """Set focus on the expression input."""
         self.query_one("#regex-input", RegexInput).focus()
 
@@ -81,9 +83,14 @@ class RegexPlayground(App[int]):
         flags.update_flags(regex_str=self.regex)
         text_input = self.query_one("#text-input", TextInput)
         text_result = self.query_one("#text-result", TextResult)
-        text_input.apply_highlighting(regex_str=self.regex)
+        text_input.apply_highlighting(
+            regex_str=self.regex, global_match=self.global_match
+        )
         text_result.make_substitutions(
-            text=text_input.text, regex_str=self.regex, sub_str=self.substitution
+            text=text_input.text,
+            regex_str=self.regex,
+            sub_str=self.substitution,
+            global_match=self.global_match,
         )
 
     @on(TextInput.Changed)
@@ -106,41 +113,27 @@ class RegexPlayground(App[int]):
         text_input = self.query_one("#text-input", TextInput)
         text_result = self.query_one("#text-result", TextResult)
         text_result.make_substitutions(
-            text=text_input.text, regex_str=self.regex, sub_str=self.substitution
+            text=text_input.text,
+            regex_str=self.regex,
+            sub_str=self.substitution,
+            global_match=self.global_match,
         )
 
+    def watch_global_match(self) -> None:
+        """Update application after a change to `global match` reactive attribute."""
+        self.watch_regex()
+
+    def action_visit(self, url: str) -> None:
+        """Visit a web URL."""
+        webbrowser.open(url)
+
+    def action_about(self) -> None:
+        """Show about modal."""
+        self.push_screen(AboutModal())
+
     def action_help(self) -> None:
-        """Show help screen."""
-        ...
-
-    @work(exclusive=True)
-    async def action_save(self) -> None:
-        """Show `SaveModal` screen for saving the result TextArea to a file."""
-        text_result = self.query_one("#text-result", TextResult)
-        text = text_result.text
-
-        def save_file(path: Path | None) -> None:
-            """Save the result TextArea to a file.
-
-            Args:
-                path: File path.
-            """
-            if path is None:
-                return
-            try:
-                if str(path).startswith("~"):
-                    path = Path.expanduser(path)
-                with open(path, "x") as f:
-                    f.write(text)
-                self.notify(f"{path}", title="File Saved", severity="information")
-            except OSError as e:
-                self.notify(f"{e}", title="Error Saving File", severity="warning")
-
-        await self.push_screen(SaveModal(), callback=save_file, wait_for_dismiss=True)
-
-    def action_exit_app(self) -> None:
-        """Exit the application."""
-        self.exit()
+        """Show help modal."""
+        self.push_screen(HelpModal())
 
 
 if __name__ == "__main__":

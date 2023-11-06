@@ -24,8 +24,9 @@ class Flag(Static):
         self.long_name = long_name
         self.short_name = short_name
         self.letter = letter
-        super().__init__(self.long_name, id=self.long_name.replace(".", "-"))
-        self.tooltip = f"(?{self.letter})"
+        super().__init__(
+            f"{self.long_name} ({self.letter})", id=self.long_name.replace(".", "-")
+        )
 
     def watch_status(self, _: str, new_status: str):
         """Update the styling (classes) on status change."""
@@ -46,7 +47,7 @@ class Flags(Horizontal):
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the container."""
-        yield Static("Flags:", id="flags-label")
+        yield Static("🚩 Flags:", id="flags-label")
         for flag in self.RE_FLAGS:  # noqa: UP028
             yield flag
 

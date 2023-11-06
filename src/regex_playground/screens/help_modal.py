@@ -1,10 +1,18 @@
+import webbrowser
+
+from textual import on
+from textual.app import ComposeResult
+from textual.binding import Binding
+from textual.containers import Center, Vertical, VerticalScroll
+from textual.screen import ModalScreen
+from textual.widgets import Button, Markdown
+
+HELP_TEXT = """\
 # Python RegEx Playground
 
 Learn, Build, & Test Python Flavored RegEx inside your terminal. Simply enter some text into the input text area, enter an regular expression into the expression input and watch your matches **light up**.
 
 RegEx Playground supports most features of the Python `re` module. For a better understanding of the Python `re` module I suggest reading the offical [Regular Expression HOWTO](https://docs.python.org/3/howto/regex.html#regex-howto) tutorial or going straight to the [module documentation](https://docs.python.org/3/library/re.html).
-
-![regex-playground](regex-playground.svg)
 
 ## Features
 
@@ -84,8 +92,29 @@ You can save the resulting text (after applying the substitution to your matches
 ## Rabbit Holes
 
 Please know, regular expression can be a deep, deep rabbit hole. If you find something that doesn't work in the playground please [file an issue](https://github.com/joshbduncan/regex-playground/issues) and I'll take a look. Thanks!
+"""
 
-## Resources
 
-- [Textual](https://github.com/Textualize/textual)
-- [Python Regular Expressions](https://docs.python.org/3/library/re.html)
+class HelpModal(ModalScreen[None]):
+    """Help documentation modal screen."""
+
+    BINDINGS = [
+        Binding("escape,f1", "dismiss_modal", show=False),
+    ]
+
+    def compose(self) -> ComposeResult:
+        with Vertical():
+            with VerticalScroll():
+                yield Markdown(HELP_TEXT)
+            with Center():
+                yield Button("Close", variant="primary")
+
+    @on(Button.Pressed)
+    def action_dismiss_modal(self) -> None:
+        """Dismiss the modal."""
+        self.dismiss(None)
+
+    @on(Markdown.LinkClicked)
+    def visit_link(self, event: Markdown.LinkClicked) -> None:
+        """A link was clicked in the help document."""
+        webbrowser.open(event.href)
