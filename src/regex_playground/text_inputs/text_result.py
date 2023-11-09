@@ -4,6 +4,7 @@ from pathlib import Path
 from textual import on, work
 from textual.binding import Binding
 from textual.events import Key
+from textual.message import Message
 from textual.widgets import TextArea
 
 from ..expression.flags import FLAG_PATTERN
@@ -11,11 +12,29 @@ from ..screens import SaveModal
 
 
 class TextResult(TextArea):
-    HIGHLIGHT_NAME = "heading"
+    """A custom `TextArea` with disabled input."""
 
     BINDINGS = [
+        Binding("ctrl+r", "load_as_input", "Reset As Input", priority=True),
         Binding("ctrl+s", "save", "Save Result", priority=True),
     ]
+
+    HIGHLIGHT_NAME = "heading"
+
+    class ResetInputWithResult(Message):
+        """Posted when the user request to reset the input text to the result text."""
+
+        text_area: TextArea
+        """The `text_area` that sent this message."""
+
+        def __init__(self, text_area: TextArea) -> None:
+            self.text_area = text_area
+            super().__init__()
+
+        @property
+        def control(self) -> TextArea:
+            """The `TextArea` that sent this message."""
+            return self.text_area
 
     @on(Key)
     def block_keys(self, event: Key) -> None:
@@ -41,6 +60,10 @@ class TextResult(TextArea):
 
         new_text = pattern.sub(sub_str, text, count=0 if global_match else 1)
         self.load_text(new_text)
+
+    def action_load_as_input(self) -> None:
+        """Set the input text to the current result text."""
+        self.post_message(self.ResetInputWithResult(self))
 
     @work(exclusive=True)
     async def action_save(self) -> None:

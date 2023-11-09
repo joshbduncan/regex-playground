@@ -3,6 +3,7 @@ from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Container
 from textual.events import DescendantBlur
+from textual.message import Message
 
 from ..text_inputs import TextInput
 from .flags import Flags
@@ -10,9 +11,14 @@ from .regex_input import RegexInput, ValidRegex
 
 
 class ExpressionContainer(Container):
+    """A custom container for the `RegexInput`, `Flags`, and `TextInput` elements."""
+
     BINDINGS = [
         Binding("ctrl+g", "global", "Global Toggle"),
     ]
+
+    class GlobalMatchToggled(Message):
+        """Posted when the global match feature is toggled."""
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the container."""
@@ -20,7 +26,7 @@ class ExpressionContainer(Container):
             placeholder="Regular Expression", validators=ValidRegex(), id="regex-input"
         )
         yield Flags(id="flags")
-        yield TextInput(self.app.text, id="text-input")  # type: ignore
+        yield TextInput(id="text-input")
 
     @on(DescendantBlur, control="#text-input")
     def hide_cursor(self, event: DescendantBlur):
@@ -29,4 +35,4 @@ class ExpressionContainer(Container):
         text_input.hide_cursor()
 
     def action_global(self) -> None:
-        self.app.global_match = not self.app.global_match  # type: ignore
+        self.post_message(self.GlobalMatchToggled())

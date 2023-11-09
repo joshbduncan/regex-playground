@@ -2,6 +2,7 @@ import re
 
 from textual import on
 from textual.app import App
+from textual.binding import Binding
 from textual.message import Message
 from textual.validation import ValidationResult, Validator
 from textual.widgets import Input
@@ -10,7 +11,7 @@ from textual.widgets import Input
 class ValidSubstitutionRegex(Validator):
     """Custom regular expression substitution validator."""
 
-    def __init__(self, app: App) -> None:  # type: ignore
+    def __init__(self, app: App[int]) -> None:
         self.app = app
         super().__init__()
 
@@ -26,8 +27,14 @@ class ValidSubstitutionRegex(Validator):
 
 
 class SubstitutionInput(Input):
+    """A custom input for a regular expression substitution."""
+
+    BINDINGS = [
+        Binding("ctrl+x", "reset", "Reset Substitution"),
+    ]
+
     class InputChanged(Message):
-        """Sent when the RegEx substitution input is changed."""
+        """Posted when the RegEx substitution input is changed."""
 
         def __init__(self, expression: str) -> None:
             self.expression = expression
@@ -42,3 +49,6 @@ class SubstitutionInput(Input):
             return
         self.tooltip = None
         self.app.post_message(self.InputChanged(expression=self.value))
+
+    def action_reset(self) -> None:
+        self.value = ""

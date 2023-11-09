@@ -35,7 +35,7 @@ class Flag(Static):
 
 
 class Flags(Horizontal):
-    """A custom container to RegEx flag labels."""
+    """A custom container for the RegEx flag labels."""
 
     RE_FLAGS = [
         Flag(long_name="re.ASCII", short_name="re.A", letter="a"),
@@ -48,8 +48,7 @@ class Flags(Horizontal):
     def compose(self) -> ComposeResult:
         """Create child widgets for the container."""
         yield Static("🚩 Flags:", id="flags-label")
-        for flag in self.RE_FLAGS:  # noqa: UP028
-            yield flag
+        yield from self.RE_FLAGS
 
     def update_flags(self, regex_str: str) -> None:
         """Update status for each flag.

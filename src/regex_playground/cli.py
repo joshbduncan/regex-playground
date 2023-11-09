@@ -46,8 +46,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
 
     app = RegexPlayground()
-    file = args.file[0] if args.file else Path(__file__).parent.joinpath("zen.txt")
-    app.load_file(file)
+    if args.file:
+        file = args.file[0]
+        app.load_file(file)
+    else:
+        text = Path(__file__).parent.joinpath("zen.txt").read_text()
+        app.load_text(text)
 
     return app.run()  # type: ignore
 

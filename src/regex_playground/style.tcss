@@ -49,6 +49,14 @@ TextResult {
   margin: 1 1;
 }
 
+# -------------
+# MISCELLANEOUS
+# -------------
+
+ToastRack {
+  margin-bottom: 2;
+}
+
 # -----------
 # ABOUT MODAL
 # -----------
@@ -83,7 +91,6 @@ AboutModal #message {
 AboutModal Button {
   margin: 1;
 }
-
 
 # ----------
 # HELP MODAL

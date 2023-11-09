@@ -1,6 +1,7 @@
 import re
 
 from textual import on
+from textual.binding import Binding
 from textual.message import Message
 from textual.validation import ValidationResult, Validator
 from textual.widgets import Input
@@ -19,8 +20,14 @@ class ValidRegex(Validator):
 
 
 class RegexInput(Input):
+    """A custom input for a regular expression."""
+
+    BINDINGS = [
+        Binding("ctrl+x", "reset", "Reset Expression"),
+    ]
+
     class InputChanged(Message):
-        """Sent when the RegEx input is changed."""
+        """Posted when the RegEx input is changed."""
 
         def __init__(self, expression: str) -> None:
             self.expression = expression
@@ -35,3 +42,6 @@ class RegexInput(Input):
             return
         self.tooltip = None
         self.app.post_message(self.InputChanged(expression=self.value))
+
+    def action_reset(self) -> None:
+        self.value = ""

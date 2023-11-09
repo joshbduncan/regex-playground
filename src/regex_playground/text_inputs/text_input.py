@@ -2,6 +2,7 @@ import re
 from dataclasses import dataclass
 
 from textual import on
+from textual.binding import Binding
 from textual.events import Mount
 from textual.widgets import TextArea
 
@@ -10,13 +11,19 @@ from ..expression.flags import FLAG_PATTERN
 
 @dataclass
 class ReNode:
-    """A custom Node object for easy highlighting while using a TextArea."""
+    """A custom Node object for easy highlighting while using a `TextArea`."""
 
     start_point: tuple[int, int]
     end_point: tuple[int, int | None]
 
 
 class TextInput(TextArea):
+    """A custom `TextArea` with RegEx match highlighting."""
+
+    BINDINGS = [
+        Binding("ctrl+r", "reset", "Reset Text"),
+    ]
+
     HIGHLIGHT_NAME = "heading"
 
     @on(Mount)
@@ -116,3 +123,7 @@ class TextInput(TextArea):
                 )
 
         self.refresh()
+
+    def action_reset(self) -> None:
+        self.load_text("")
+        self.post_message(self.Changed(self))  # FIXME: should happen automatically?

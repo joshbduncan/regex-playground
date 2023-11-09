@@ -6,6 +6,8 @@ from .substitution_input import SubstitutionInput, ValidSubstitutionRegex
 
 
 class SubstitutionContainer(Container):
+    """A custom container for the `SubstitutionInput` and `TextResult` elements."""
+
     def compose(self) -> ComposeResult:
         """Create child widgets for the container."""
         yield SubstitutionInput(
@@ -13,4 +15,4 @@ class SubstitutionContainer(Container):
             validators=ValidSubstitutionRegex(app=self.app),
             id="substitution-input",
         )
-        yield TextResult(self.app.text, id="text-result")  # type: ignore
+        yield TextResult("", id="text-result")
