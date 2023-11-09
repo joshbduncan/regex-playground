@@ -125,5 +125,4 @@ class TextInput(TextArea):
         self.refresh()
 
     def action_reset(self) -> None:
-        self.load_text("")
-        self.post_message(self.Changed(self))  # FIXME: should happen automatically?
+        self.clear()
