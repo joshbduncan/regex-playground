@@ -6,7 +6,7 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.notifications import Notification, Notify
 from textual.reactive import reactive
-from textual.widgets import Footer, Header, Rule
+from textual.widgets import Footer, Header, Rule, TextArea
 
 from .expression import ExpressionContainer, Flags, RegexInput
 from .screens import AboutModal, HelpModal
@@ -110,16 +110,41 @@ class RegexPlayground(App[int]):
         """Update `regex` reactive attribute on user input."""
         self.regex = message.expression
 
-    @on(TextInput.Changed)
+    @on(TextArea.Changed, "#text-input")
+    @on(SubstitutionInput.Changed, "#substitution-input")
+    def validate_regex_inputs(self) -> bool:
+        """Ensure both regex input strings are valid before performing the substitution."""
+        regex_input = self.query_one("#regex-input", RegexInput)
+        substitution_input = self.query_one("#substitution-input", SubstitutionInput)
+        regex_input_validation_result = regex_input.validate(regex_input.value)
+        substitution_validation_result = substitution_input.validate(
+            substitution_input.value
+        )
+        if regex_input_validation_result and not regex_input_validation_result.is_valid:
+            return False
+        if (
+            substitution_validation_result
+            and not substitution_validation_result.is_valid
+        ):
+            return False
+        return True
+
+    @on(TextArea.Changed, "#text-input")
     def watch_regex(self) -> None:
         """Update application after a change to `regex` reactive attribute."""
         flags = self.query_one("#flags", Flags)
         flags.update_flags(regex_str=self.regex)
         text_input = self.query_one("#text-input", TextInput)
         text_result = self.query_one("#text-result", TextResult)
+
         text_input.apply_highlighting(
             regex_str=self.regex, global_match=self.global_match
         )
+
+        if not self.validate_regex_inputs():
+            text_result.reset_highlighting()
+            text_result.load_text(text_input.text)
+            return
         text_result.make_substitutions(
             text=text_input.text,
             regex_str=self.regex,
@@ -127,12 +152,11 @@ class RegexPlayground(App[int]):
             global_match=self.global_match,
         )
 
-    @on(TextInput.Changed)
-    def update_text_result_text(self) -> None:
+    @on(TextArea.Changed, "#text-input")
+    def update_text_result_text(self, event: TextArea.Changed) -> None:
         """Update the result TextArea when the input TextArea changes."""
-        text_input = self.query_one("#text-input", TextInput)
         text_result = self.query_one("#text-result", TextResult)
-        text_result.load_text(text_input.text)
+        text_result.load_text(event.control.text)
 
     @on(SubstitutionInput.InputChanged)
     def update_substitution_string(
@@ -141,7 +165,7 @@ class RegexPlayground(App[int]):
         """Update `substitution` reactive attribute on user input."""
         self.substitution = message.expression
 
-    @on(TextInput.Changed)
+    @on(TextArea.Changed, "#text-input")
     def watch_substitution(self) -> None:
         """Update application after a change to `substitution` reactive attribute."""
         text_input = self.query_one("#text-input", TextInput)
