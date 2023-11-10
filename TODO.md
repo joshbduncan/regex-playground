@@ -8,6 +8,8 @@ The format is based on [TODO.md](https://github.com/todomd/todo.md)
 
 - [ ] load text files from within tui  
 - [ ] display match count  
+- [ ] add tests  
+- [ ] make flags clickable
 
 ### Doing
 

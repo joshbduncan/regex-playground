@@ -118,8 +118,6 @@ class RegexPlayground(App[int]):
         flags.update_flags(regex_str=self.regex)
         text_input = self.query_one("#text-input", TextInput)
         text_result = self.query_one("#text-result", TextResult)
-        if text_input.text == text_result.text:
-            return
         text_input.apply_highlighting(
             regex_str=self.regex, global_match=self.global_match
         )
