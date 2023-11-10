@@ -9,7 +9,9 @@ The format is based on [TODO.md](https://github.com/todomd/todo.md)
 - [ ] load text files from within tui  
 - [ ] display match count  
 - [ ] add tests  
-- [ ] make flags clickable
+- [ ] make flags clickable  
+- [ ] enable highlighting for whitespace characters [\t\n\r\f\v]  
+- [ ] enable highlighting for the result text  
 
 ### Doing
 
