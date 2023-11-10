@@ -53,9 +53,7 @@ TextResult {
 # MISCELLANEOUS
 # -------------
 
-ToastRack {
-  margin-bottom: 2;
-}
+
 
 # -----------
 # ABOUT MODAL

@@ -4,7 +4,6 @@ from pathlib import Path
 from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
-from textual.events import Mount
 from textual.notifications import Notification, Notify
 from textual.reactive import reactive
 from textual.widgets import Footer, Header, Rule
@@ -84,8 +83,8 @@ class RegexPlayground(App[int]):
         )
         self.load_text(text, notification)
 
-    @on(Mount)
-    def set_initial_text(self) -> None:
+    def on_mount(self) -> None:
+        """Actions to take when the widget is mounted within the app."""
         if self._initial_text:
             text_input = self.query_one("#text-input", TextInput)
             text_result = self.query_one("#text-result", TextResult)

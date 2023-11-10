@@ -4,7 +4,6 @@ from textual import on
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Center, Vertical
-from textual.events import Mount
 from textual.screen import ModalScreen
 from textual.widgets import Button, Static
 
@@ -31,9 +30,8 @@ class AboutModal(ModalScreen[None]):
             with Center():
                 yield Button("OK", variant="primary")
 
-    @on(Mount)
-    def set_proper_focus(self) -> None:
-        """Set focus on the expression input."""
+    def on_mount(self) -> None:
+        """Actions to take when the widget is mounted within the app."""
         self.query_one(Button).focus()
 
     @on(Button.Pressed)

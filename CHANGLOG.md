@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - reset input text with the result text using `Ctrl+R` (helpful for multiple operations)
 - app notifications
 - key-bindings for easily clearing inputs and resetting main text area
+- custom syntax theme for better control of highlighting
+- highlighting for whitespace characters
 
 ### Changed
 

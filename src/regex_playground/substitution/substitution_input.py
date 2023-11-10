@@ -11,7 +11,7 @@ from textual.widgets import Input
 class ValidSubstitutionRegex(Validator):
     """Custom regular expression substitution validator."""
 
-    def __init__(self, app: App[int]) -> None:
+    def __init__(self, app: App) -> None:  # type: ignore
         self.app = app
         super().__init__()
 

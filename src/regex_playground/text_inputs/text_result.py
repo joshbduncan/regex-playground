@@ -9,6 +9,7 @@ from textual.widgets import TextArea
 
 from ..expression.flags import FLAG_PATTERN
 from ..screens import SaveModal
+from .theme import THEME
 
 
 class TextResult(TextArea):
@@ -19,7 +20,7 @@ class TextResult(TextArea):
         Binding("ctrl+s", "save", "Save Result", priority=True),
     ]
 
-    HIGHLIGHT_NAME = "heading"
+    HIGHLIGHT_NAME = "match"
 
     class ResetInputWithResult(Message):
         """Posted when the user request to reset the input text to the result text."""
@@ -35,6 +36,15 @@ class TextResult(TextArea):
         def control(self) -> TextArea:
             """The `TextArea` that sent this message."""
             return self.text_area
+
+    def on_mount(self) -> None:
+        """Actions to take when the widget is mounted within the app."""
+        self.setup_theme()
+
+    def setup_theme(self) -> None:
+        """Register the app theme and make active."""
+        self.register_theme(THEME)
+        self.theme = "regex_playground"
 
     @on(Key)
     def block_keys(self, event: Key) -> None:

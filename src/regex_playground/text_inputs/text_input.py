@@ -1,12 +1,11 @@
 import re
 from dataclasses import dataclass
 
-from textual import on
 from textual.binding import Binding
-from textual.events import Mount
 from textual.widgets import TextArea
 
 from ..expression.flags import FLAG_PATTERN
+from .theme import THEME
 
 
 @dataclass
@@ -24,9 +23,18 @@ class TextInput(TextArea):
         Binding("ctrl+r", "reset", "Reset Text"),
     ]
 
-    HIGHLIGHT_NAME = "heading"
+    HIGHLIGHT_NAME = "match"
 
-    @on(Mount)
+    def on_mount(self) -> None:
+        """Actions to take when the widget is mounted within the app."""
+        self.setup_theme()
+        self.hide_cursor()
+
+    def setup_theme(self) -> None:
+        """Register the app theme and make it active."""
+        self.register_theme(THEME)
+        self.theme = "regex_playground"
+
     def hide_cursor(self) -> None:
         """Hack to hide the TextArea cursor when the widget is mounted."""
         self._cursor_blink_visible = False
