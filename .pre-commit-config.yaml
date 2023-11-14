@@ -29,3 +29,4 @@ repos:
     rev: v1.5.1
     hooks:
       - id: mypy
+        args: [--check-untyped-defs, --disallow-any-generics, --ignore-missing-imports, --strict-equality, --warn-redundant-casts, --warn-return-any, --warn-unreachable, --warn-unused-configs, --no-implicit-reexport]

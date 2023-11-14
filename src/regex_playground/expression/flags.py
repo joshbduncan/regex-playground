@@ -17,9 +17,9 @@ class Flag(Static):
         """Initialize a Flag (Static) widget.
 
         Args:
-            long_name: RegEx flag long name.
-            short_name: RegEx flag short name.
-            letter: RegEx flag inline letter.
+            long_name: Regular expression flag long name.
+            short_name: Regular expression flag short name.
+            letter: Regular expression flag inline letter.
         """
         self.long_name = long_name
         self.short_name = short_name
@@ -35,7 +35,7 @@ class Flag(Static):
 
 
 class Flags(Horizontal):
-    """A custom container for the RegEx flag labels."""
+    """A custom container for the regular expression flag labels."""
 
     RE_FLAGS = [
         Flag(long_name="re.ASCII", short_name="re.A", letter="a"),
@@ -50,11 +50,11 @@ class Flags(Horizontal):
         yield Static("🚩 Flags:", id="flags-label")
         yield from self.RE_FLAGS
 
-    def update_flags(self, regex_str: str) -> None:
+    def update(self, regex_str: str) -> None:
         """Update status for each flag.
 
         Args:
-            regex_str: RegEx string.
+            regex_str: Regular expression string.
         """
         matched_flags = FLAG_PATTERN.match(regex_str)
         flags = self.query(Flag)

@@ -1,15 +1,13 @@
 import re
 
-from textual import on
 from textual.app import App
 from textual.binding import Binding
-from textual.message import Message
 from textual.validation import ValidationResult, Validator
 from textual.widgets import Input
 
 
 class ValidSubstitutionRegex(Validator):
-    """Custom regular expression substitution validator."""
+    """Custom regular expression substitution string validator."""
 
     def __init__(self, app: App) -> None:  # type: ignore
         self.app = app
@@ -27,28 +25,20 @@ class ValidSubstitutionRegex(Validator):
 
 
 class SubstitutionInput(Input):
-    """A custom input for a regular expression substitution."""
+    """A custom input for a regular expression substitution string."""
 
     BINDINGS = [
         Binding("ctrl+x", "reset", "Reset Substitution"),
     ]
 
-    class InputChanged(Message):
-        """Posted when the RegEx substitution input is changed."""
-
-        def __init__(self, expression: str) -> None:
-            self.expression = expression
-            super().__init__()
-
-    @on(Input.Changed)
-    def update_input(self, event: Input.Changed) -> None:
-        """Update application on validated user input."""
-        if event.validation_result and not event.validation_result.is_valid:
-            self.app.post_message(self.InputChanged(expression=""))
-            self.tooltip = event.validation_result.failure_descriptions[-1]
-            return
-        self.tooltip = None
-        self.app.post_message(self.InputChanged(expression=self.value))
+    @property
+    def is_valid(self) -> bool:
+        """Is the current value a valid regular expression substitution."""
+        validation_result = self.validate(self.value)
+        if validation_result and not validation_result.is_valid:
+            return False
+        return True
 
     def action_reset(self) -> None:
+        """Reset the input."""
         self.value = ""

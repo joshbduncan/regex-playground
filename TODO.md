@@ -10,14 +10,18 @@ The format is based on [TODO.md](https://github.com/todomd/todo.md)
 - [ ] display match count  
 - [ ] add tests  
 - [ ] make flags clickable  
-- [ ] enable highlighting for the result text  
+- [ ] fix issue where input messages beat others and input validation doesn't stop the substitution  
+- [ ] flags should wrap to a new line if screen not wide enough  
 
 ### Doing
 
-- [ ] add some toast alerts  
 
 ### Done ✓
 
+- [x] fix highlighting visibility on cursor line in input text area  
+- [x] enable highlighting for the result text  
+- [x] add some toast alerts  
+- [x] substitution exception when resetting the expression input  
 - [x] custom syntax theme for better highlighting control  
 - [x] enable highlighting for whitespace characters [\t\n\r\f\v]  
 - [x] reset bindings for inputs  

@@ -6,7 +6,7 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.notifications import Notification, Notify
 from textual.reactive import reactive
-from textual.widgets import Footer, Header, Rule, TextArea
+from textual.widgets import Footer, Header, Input, Rule, TextArea
 
 from .expression import ExpressionContainer, Flags, RegexInput
 from .screens import AboutModal, HelpModal
@@ -22,7 +22,7 @@ class RegexPlayground(App[int]):
     BINDINGS = [
         Binding("f1", "help", "Help"),
         Binding("f2", "about", "About"),
-        Binding("ctrl+q", "app.quit", "Quit"),
+        Binding("ctrl+g", "global_match", "Global Toggle"),
     ]
 
     text: reactive[str] = reactive("", init=False)
@@ -30,12 +30,45 @@ class RegexPlayground(App[int]):
     substitution: reactive[str] = reactive("", init=False)
     global_match: reactive[bool] = reactive(True, init=False)
 
-    def __init__(self, *args, **kwargs):
-        """Initialise the application."""
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize the application."""
 
         self._initial_text: str = ""
         self._initial_notifications: list[Notification] = []
         super().__init__(*args, **kwargs)
+
+    #######################
+    # WIDGETS QUICK ACCESS#
+    #######################
+
+    @property
+    def regex_input(self) -> RegexInput:
+        """Quick access to the `RegexInput` widget."""
+        return self.query_one("#regex-input", RegexInput)  # type: ignore[no-any-return]
+
+    @property
+    def text_input(self) -> TextInput:
+        """Quick access to the `TextInput` widget."""
+        return self.query_one("#text-input", TextInput)  # type: ignore[no-any-return]
+
+    @property
+    def substitution_input(self) -> SubstitutionInput:
+        """Quick access to the `SubstitutionInput` widget."""
+        return self.query_one("#substitution-input", SubstitutionInput)  # type: ignore[no-any-return]
+
+    @property
+    def text_result(self) -> TextResult:
+        """Quick access to the `TextResult` widget."""
+        return self.query_one("#text-result", TextResult)  # type: ignore[no-any-return]
+
+    @property
+    def flags(self) -> Flags:
+        """Quick access to the `Flags` widget."""
+        return self.query_one("#flags", Flags)  # type: ignore[no-any-return]
+
+    #########################
+    # TUI SETUP AND STARTUP #
+    #########################
 
     def compose(self) -> ComposeResult:
         """Compose the main screen.
@@ -48,6 +81,64 @@ class RegexPlayground(App[int]):
         yield Rule(line_style="thick")
         yield SubstitutionContainer(id="substitution-container")
         yield Footer()
+
+    def on_mount(self) -> None:
+        """Load text into the app."""
+        if self._initial_text:
+            self.text_input.load_text(self._initial_text)
+            self.text_result.load_text(self._initial_text)
+
+    def on_ready(self) -> None:
+        """Set focus on the expression input and post any notifications."""
+        self.regex_input.focus()
+        for notification in self._initial_notifications:
+            self.post_message(Notify(notification))
+
+    #################
+    # WATCH METHODS #
+    #################
+
+    def watch_regex(self) -> None:
+        """Regular expression string updated."""
+        self.log(f"regular expression updated: {self.regex=}")
+        self.flags_update()
+        self.text_input_update()
+        self.text_result_update()
+
+    def watch_substitution(self) -> None:
+        """Regular expression substitution string updated."""
+        self.log(f"substitution expression updated: {self.substitution=}")
+        self.text_result_update()
+
+    def watch_global_match(self) -> None:
+        """Global match toggled."""
+        self.log(f"global match updated: {self.global_match=}")
+        self.text_input_update()
+        self.text_result_update()
+
+    ############################
+    # EXPRESSION INPUT METHODS #
+    ############################
+
+    @on(Input.Changed, "#regex-input")
+    @on(Input.Changed, "#substitution-input")
+    def process_expression_input(self, event: Input.Changed) -> None:
+        """Update the regular expression strings or alert if not valid."""
+        widget = event.control
+        tooltip = None
+        value = event.value
+        if event.validation_result and not event.validation_result.is_valid:
+            tooltip = event.validation_result.failure_descriptions[-1]
+            value = ""
+        widget.tooltip = tooltip
+        if widget.id == "regex-input":
+            self.regex = value
+        else:
+            self.substitution = value
+
+    ###########################
+    # TEXT AREA INPUT METHODS #
+    ###########################
 
     def load_text(self, text: str, notification: Notification | None = None) -> None:
         """Load text into the application.
@@ -83,108 +174,61 @@ class RegexPlayground(App[int]):
         )
         self.load_text(text, notification)
 
-    def on_mount(self) -> None:
-        """Actions to take when the widget is mounted within the app."""
-        if self._initial_text:
-            text_input = self.query_one("#text-input", TextInput)
-            text_result = self.query_one("#text-result", TextResult)
-            text_input.load_text(self._initial_text)
-            text_result.load_text(self._initial_text)
-
-    def on_ready(self) -> None:
-        """Set focus on the expression input."""
-        self.query_one("#regex-input", RegexInput).focus()
-        for notification in self._initial_notifications:
-            self.post_message(Notify(notification))
-
-    @on(ExpressionContainer.GlobalMatchToggled)
-    def update_global_toggle(self) -> None:
-        self.global_match = not self.global_match
-
-    def watch_global_match(self) -> None:
-        """Update application after a change to `global match` reactive attribute."""
-        self.watch_regex()
-
-    @on(RegexInput.InputChanged)
-    def update_regex_string(self, message: RegexInput.InputChanged) -> None:
-        """Update `regex` reactive attribute on user input."""
-        self.regex = message.expression
-
     @on(TextArea.Changed, "#text-input")
-    @on(SubstitutionInput.Changed, "#substitution-input")
-    def validate_regex_inputs(self) -> bool:
-        """Ensure both regex input strings are valid before performing the substitution."""
-        regex_input = self.query_one("#regex-input", RegexInput)
-        substitution_input = self.query_one("#substitution-input", SubstitutionInput)
-        regex_input_validation_result = regex_input.validate(regex_input.value)
-        substitution_validation_result = substitution_input.validate(
-            substitution_input.value
-        )
-        if regex_input_validation_result and not regex_input_validation_result.is_valid:
-            return False
-        if (
-            substitution_validation_result
-            and not substitution_validation_result.is_valid
-        ):
+    def update_text_areas(self, event: TextArea.Changed) -> None:
+        """Update `TextResult` text, highlighting, and substitutions after changes to `TextInput`."""
+        self.text_result.load_text(event.control.text)
+        self.text_input_update()
+        self.text_result_update()
+
+    ##################################
+    # REGEX AND HIGHLIGHTING METHODS #
+    ##################################
+
+    @property
+    def valid_regex_strings(self) -> bool:
+        """Validate both `self.regex` and `self.substitution`. This is needed in cases
+        where the substitution method is fired by something other than `Input.Changed`."""
+        if not self.regex_input.is_valid or not self.substitution_input.is_valid:
             return False
         return True
 
-    @on(TextArea.Changed, "#text-input")
-    def watch_regex(self) -> None:
-        """Update application after a change to `regex` reactive attribute."""
-        flags = self.query_one("#flags", Flags)
-        flags.update_flags(regex_str=self.regex)
-        text_input = self.query_one("#text-input", TextInput)
-        text_result = self.query_one("#text-result", TextResult)
+    def flags_update(self) -> None:
+        """Toggle the status of any flags found in the regular expression string."""
+        self.flags.update(self.regex)
 
-        text_input.apply_highlighting(
-            regex_str=self.regex, global_match=self.global_match
-        )
+    def text_input_update(self) -> None:
+        """Apply highlighting to `TextInput`."""
+        self.text_input.update(self.regex, self.global_match)
 
-        if not self.validate_regex_inputs():
-            text_result.reset_highlighting()
-            text_result.load_text(text_input.text)
-            return
-        text_result.make_substitutions(
-            text=text_input.text,
-            regex_str=self.regex,
-            sub_str=self.substitution,
-            global_match=self.global_match,
-        )
-
-    @on(TextArea.Changed, "#text-input")
-    def update_text_result_text(self, event: TextArea.Changed) -> None:
-        """Update the result TextArea when the input TextArea changes."""
-        text_result = self.query_one("#text-result", TextResult)
-        text_result.load_text(event.control.text)
-
-    @on(SubstitutionInput.InputChanged)
-    def update_substitution_string(
-        self, message: SubstitutionInput.InputChanged
-    ) -> None:
-        """Update `substitution` reactive attribute on user input."""
-        self.substitution = message.expression
-
-    @on(TextArea.Changed, "#text-input")
-    def watch_substitution(self) -> None:
-        """Update application after a change to `substitution` reactive attribute."""
-        text_input = self.query_one("#text-input", TextInput)
-        text_result = self.query_one("#text-result", TextResult)
-        text_result.make_substitutions(
-            text=text_input.text,
-            regex_str=self.regex,
-            sub_str=self.substitution,
-            global_match=self.global_match,
+    def text_result_update(self) -> None:
+        """Apply substitutions and highlighting to `TextResult`."""
+        if not self.valid_regex_strings:
+            self.text_result.load_text(self.text_input.text)
+        self.text_result.update(
+            self.text_input.text,
+            self.regex,
+            self.substitution,
+            self.global_match,
         )
 
     @on(TextResult.ResetInputWithResult)
     def reset_input_with_result(self, message: TextResult.ResetInputWithResult) -> None:
-        """Reset contents of `TextInput` with contents of `TextResult`."""
+        """Reset the contents of `TextInput` with the contents of `TextResult`."""
         notification = Notification(
             "Result text was successfully loaded.",
             "Input Text Updated",
         )
         self.load_text(message.control.text, notification)
+        self.text_result.reset_highlighting()
+
+    #############################
+    # KEYBINDING ACTION METHODS #
+    #############################
+
+    def action_global_match(self) -> None:
+        """Toggle regular expression global match."""
+        self.global_match = not self.global_match
 
     def action_visit(self, url: str) -> None:
         """Visit a web URL."""
@@ -197,8 +241,3 @@ class RegexPlayground(App[int]):
     def action_help(self) -> None:
         """Show help modal."""
         self.push_screen(HelpModal())
-
-
-if __name__ == "__main__":
-    app = RegexPlayground()
-    app.run()

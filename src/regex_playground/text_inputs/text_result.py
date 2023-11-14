@@ -9,10 +9,10 @@ from textual.widgets import TextArea
 
 from ..expression.flags import FLAG_PATTERN
 from ..screens import SaveModal
-from .theme import THEME
+from .custom_text_area import RegexTextArea
 
 
-class TextResult(TextArea):
+class TextResult(RegexTextArea):
     """A custom `TextArea` with disabled input."""
 
     BINDINGS = [
@@ -20,7 +20,7 @@ class TextResult(TextArea):
         Binding("ctrl+s", "save", "Save Result", priority=True),
     ]
 
-    HIGHLIGHT_NAME = "match"
+    HIGHLIGHT_NAME = "sub"
 
     class ResetInputWithResult(Message):
         """Posted when the user request to reset the input text to the result text."""
@@ -37,39 +37,35 @@ class TextResult(TextArea):
             """The `TextArea` that sent this message."""
             return self.text_area
 
-    def on_mount(self) -> None:
-        """Actions to take when the widget is mounted within the app."""
-        self.setup_theme()
-
-    def setup_theme(self) -> None:
-        """Register the app theme and make active."""
-        self.register_theme(THEME)
-        self.theme = "regex_playground"
-
     @on(Key)
     def block_keys(self, event: Key) -> None:
         """Block all key input within this TextArea."""
         event.prevent_default()
 
-    def make_substitutions(
-        self, text: str, regex_str: str, sub_str: str, global_match: bool
+    def update(
+        self,
+        match_text: str,
+        regex_str: str,
+        sub_str: str,
+        global_match: bool,
     ) -> None:
-        """Apply RegEx substitutions to the contained text.
+        """Apply substitutions and update highlighting with new regular expression strings.
 
         Args:
-            text: Text to match on.
-            regex_str: RegEx string.
-            sub_str: RegEx substitution string.
-            global_match: Should all matches by substituted.
+            match_text: Original text to match on.
+            regex_str: Regular expression string.
+            sub_str: Expression string to use for substitution.
+            global_match: Should all matches be highlighted.
         """
-        pattern = re.compile(regex_str)
-
         if not regex_str or not sub_str or not re.sub(FLAG_PATTERN, "", regex_str):
-            self.load_text(text)
+            self.load_text(match_text)
             return
-
-        new_text = pattern.sub(sub_str, text, count=0 if global_match else 1)
+        pattern = re.compile(regex_str)
+        new_text = pattern.sub(sub_str, match_text, count=0 if global_match else 1)
         self.load_text(new_text)
+        matches = pattern.finditer(match_text)
+        nodes = self.matches_to_faux_nodes(matches, sub_str)
+        self.apply_highlighting(nodes, global_match)
 
     def action_load_as_input(self) -> None:
         """Set the input text to the current result text."""

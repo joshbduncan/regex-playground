@@ -1,6 +1,6 @@
-# ----------
-# EXPRESSION
-# ----------
+# ---------- #
+# EXPRESSION #
+# ---------- #
 
 ExpressionContainer {
   height: auto;
@@ -49,15 +49,10 @@ TextResult {
   margin: 1 1;
 }
 
-# -------------
-# MISCELLANEOUS
-# -------------
+# ----------- #
+# ABOUT MODAL #
+# ----------- #
 
-
-
-# -----------
-# ABOUT MODAL
-# -----------
 AboutModal {
   align: center middle;
 }
@@ -90,9 +85,9 @@ AboutModal Button {
   margin: 1;
 }
 
-# ----------
-# HELP MODAL
-# ----------
+# ---------- #
+# HELP MODAL #
+# ---------- #
 
 HelpModal {
   align: center middle;
@@ -115,9 +110,9 @@ HelpModal > Vertical > Center {
   padding: 1;
 }
 
-# ----------
-# SAVE MODAL
-# ----------
+# ---------- #
+# SAVE MODAL #
+# ---------- #
 
 SaveModal {
   align: center middle;

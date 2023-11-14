@@ -36,6 +36,10 @@ RegEx Playground is split into two halves.
 - Result as Input: Want to performance multiple operations on your text? Use `Ctrl+R` to reset the Text Panel with the text from the Result Panel.
 - Saving: You can save the resulting text (after applying the substitution to your matches) via the `CTRL+S` keybinding. You must select the Result text area for this keybinding to be available.
 
+## ❌ How to QUIT
+
+Just use the keybinding "Ctrl+C" to quit the app at anytime.
+
 ## More Info
 
 You can find out more info about RegEx Playground in the [README](https://github.com/joshbduncan/regex-playground/blob/main/README.md).

@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - key-bindings for easily clearing inputs and resetting main text area
 - custom syntax theme for better control of highlighting
 - highlighting for whitespace characters
+- highlighting for substitutions in the result text area
+
+## Fixed
+
+- both expression inputs are validated before substitution to avoid thrown exceptions
 
 ### Changed
 
