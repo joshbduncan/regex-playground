@@ -22,5 +22,5 @@ class ExpressionContainer(Container):
     @on(DescendantBlur, control="#text-input")
     def hide_cursor(self, event: DescendantBlur):
         """Hide the input TextArea cursor with another widget is focused."""
-        text_input: TextInput = event.control  # type: ignore
+        text_input: TextInput = event.control  # type: ignore[assignment]
         text_input.hide_cursor()

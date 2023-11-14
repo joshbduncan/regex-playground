@@ -16,7 +16,7 @@ class ValidSubstitutionRegex(Validator):
     def validate(self, value: str) -> ValidationResult:
         """Check if `value` is a valid regular expression substitution."""
         try:
-            pattern = re.compile(self.app.regex)  # type: ignore
+            pattern = re.compile(self.app.regex)  # type: ignore[attr-defined]
             pattern.sub(value, "")
             return self.success()
         except (re.error, IndexError) as e:

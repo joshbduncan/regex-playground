@@ -9,7 +9,6 @@ The format is based on [TODO.md](https://github.com/todomd/todo.md)
 - [ ] load text files from within tui  
 - [ ] display match count  
 - [ ] add tests  
-- [ ] make flags clickable  
 - [ ] fix issue where input messages beat others and input validation doesn't stop the substitution  
 - [ ] flags should wrap to a new line if screen not wide enough  
 
@@ -18,6 +17,7 @@ The format is based on [TODO.md](https://github.com/todomd/todo.md)
 
 ### Done ✓
 
+- [x] make flags clickable  
 - [x] fix highlighting visibility on cursor line in input text area  
 - [x] enable highlighting for the result text  
 - [x] add some toast alerts  

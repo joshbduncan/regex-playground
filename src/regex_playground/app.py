@@ -9,6 +9,7 @@ from textual.reactive import reactive
 from textual.widgets import Footer, Header, Input, Rule, TextArea
 
 from .expression import ExpressionContainer, Flags, RegexInput
+from .expression.flags import FLAG_PATTERN, Flag
 from .screens import AboutModal, HelpModal
 from .substitution import SubstitutionContainer, SubstitutionInput
 from .text_inputs import TextInput, TextResult
@@ -192,6 +193,32 @@ class RegexPlayground(App[int]):
         if not self.regex_input.is_valid or not self.substitution_input.is_valid:
             return False
         return True
+
+    @on(Flag.Clicked)
+    def clicked_flag(self, message: Flag.Clicked) -> None:
+        """Update the regex string and ui when a flag is clicked"""
+        flag_letter = message.letter
+        regex_input = self.regex_input
+        current_value = regex_input.value
+        matched_flags = FLAG_PATTERN.match(current_value)
+        if matched_flags:
+            flags = matched_flags.groups()[0]
+            updated_flags = (
+                flags.replace(flag_letter, "")
+                if flag_letter in flags
+                else flags + flag_letter
+            )
+            new_value = (
+                FLAG_PATTERN.sub(f"(?{updated_flags})", current_value)
+                if updated_flags
+                else FLAG_PATTERN.sub("", current_value)
+            )
+        else:
+            new_value = f"(?{flag_letter}){current_value}"
+        if not new_value:
+            return
+        regex_input.value = new_value
+        regex_input.action_end()
 
     def flags_update(self) -> None:
         """Toggle the status of any flags found in the regular expression string."""

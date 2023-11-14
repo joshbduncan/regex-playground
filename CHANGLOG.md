@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - custom syntax theme for better control of highlighting
 - highlighting for whitespace characters
 - highlighting for substitutions in the result text area
+- regular expression flags are now clickable
 
 ## Fixed
 
