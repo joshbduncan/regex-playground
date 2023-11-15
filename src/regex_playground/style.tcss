@@ -7,9 +7,20 @@ ExpressionContainer {
   margin: 1;
 }
 
-TextInput {
-  height: 10;
-  margin: 0 1;
+ExpressionContainer #regex-input-container {
+  height: auto;
+}
+
+RegexInput {
+  width: 3fr;
+}
+
+ExpressionContainer #matches-alert {
+  background: $primary;
+  content-align: center middle;
+  height: 3;
+  text-align: center;
+  width: 1fr;
 }
 
 Flags {
@@ -39,6 +50,11 @@ Flags > Static:focus.-active, Flags > Static:hover.-active, Flag.-active {
 
 Flag.-inactive {
   color: $primary-background;
+}
+
+TextInput {
+  height: 10;
+  margin: 0 1;
 }
 
 # ------------

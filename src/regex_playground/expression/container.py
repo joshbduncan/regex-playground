@@ -1,7 +1,8 @@
 from textual import on
 from textual.app import ComposeResult
-from textual.containers import Container
+from textual.containers import Container, Horizontal
 from textual.events import DescendantBlur
+from textual.widgets import Static
 
 from ..text_inputs import TextInput
 from .flags import Flags
@@ -13,11 +14,21 @@ class ExpressionContainer(Container):
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the container."""
-        yield RegexInput(
-            placeholder="Regular Expression", validators=ValidRegex(), id="regex-input"
-        )
+        with Horizontal(id="regex-input-container"):
+            yield RegexInput(
+                placeholder="Regular Expression",
+                validators=ValidRegex(),
+                id="regex-input",
+            )
+            yield Static("", id="matches-alert")
         yield Flags(id="flags")
         yield TextInput(id="text-input")
+
+    @on(TextInput.MatchesFound)
+    def updated_substitutions_alert(self, message: TextInput.MatchesFound) -> None:
+        matches_alert = self.query_one("#matches-alert", Static)
+        msg = f"{message.count} matches" if message.count else ""
+        matches_alert.update(msg)
 
     @on(DescendantBlur, control="#text-input")
     def hide_cursor(self, event: DescendantBlur):
