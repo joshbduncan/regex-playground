@@ -6,7 +6,6 @@ The format is based on [TODO.md](https://github.com/todomd/todo.md)
 
 ### Todo
 
-- [ ] load text files from within tui  
 - [ ] add tests  
 - [ ] fix issue where input messages beat others and input validation doesn't stop the substitution  
 
@@ -15,6 +14,10 @@ The format is based on [TODO.md](https://github.com/todomd/todo.md)
 
 ### Done ✓
 
+- [x] load text files from within tui  
+- [x] implement better file modals  
+- [x] disable save modal if result text matches input text  
+- [x] disable "Reset As Input" binding if result text matches input text  
 - [x] display match count  
 - [x] flags behave more like buttons (focusable, hover states)  
 - [x] make flags clickable  

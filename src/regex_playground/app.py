@@ -129,9 +129,12 @@ class RegexPlayground(App[int]):
         """
         if self.app._running:
             text_input = self.query_one("#text-input", TextInput)
+            text_result = self.query_one("#text-result", TextResult)
             if text == text_input.text:
                 return
             text_input.load_text(text)
+            text_result.load_text(text)
+
             if notification:
                 self.post_message(Notify(notification))
         else:
@@ -153,6 +156,10 @@ class RegexPlayground(App[int]):
             "Input Text Updated",
         )
         self.load_text(text, notification)
+
+    @on(TextInput.NewFile)
+    def load_file_from_tui(self, message: TextInput.NewFile) -> None:
+        self.load_file(message.path)
 
     @on(TextArea.Changed, "#text-input")
     def update_text_areas(self, event: TextArea.Changed) -> None:
@@ -228,6 +235,9 @@ class RegexPlayground(App[int]):
     @on(TextResult.ResetInputWithResult)
     def reset_input_with_result(self, message: TextResult.ResetInputWithResult) -> None:
         """Reset the contents of `TextInput` with the contents of `TextResult`."""
+        text_input = self.query_one("#text-input", TextInput)
+        if message.control.text == text_input.text:
+            return
         notification = Notification(
             "Result text was successfully loaded.",
             "Input Text Updated",

@@ -6,9 +6,9 @@ from textual.binding import Binding
 from textual.events import Key
 from textual.message import Message
 from textual.widgets import TextArea
+from textual_fspicker import FileSave
 
 from ..expression.flags import FLAG_PATTERN
-from ..screens import SaveModal
 from .custom_text_area import RegexTextArea
 
 
@@ -94,6 +94,14 @@ class TextResult(RegexTextArea):
             except OSError as e:
                 self.notify(f"{e}", title="Error Saving File", severity="warning")
 
+        if not self.text:
+            self.notify(
+                "There is no text to save.", title="Nothing To Save", severity="warning"
+            )
+            return
+
         await self.app.push_screen(
-            SaveModal(), callback=save_file, wait_for_dismiss=True
+            FileSave(".", title="Save Text As"),
+            callback=save_file,
+            wait_for_dismiss=True,
         )
