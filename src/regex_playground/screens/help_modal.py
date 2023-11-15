@@ -10,11 +10,11 @@ from textual.widgets import Button, Markdown
 HELP_TEXT = """\
 # Python RegEx Playground
 
-Learn, Build, & Test Python Flavored RegEx inside your terminal. Simply enter some text into the input text area, enter an regular expression into the expression input and watch your matches **light up**.
+Learn, Build, & Test Python Flavored RegEx inside your terminal. Simply enter some text into the input text area, enter a regular expression into the expression input, and watch your matches **light up**.
 
 RegEx Playground supports most features of the Python `re` module like ⭐️ Metacharacters, 🚩 Flags, ❨❩ Groups, 🌎 Global Matching, and more...
 
-For a better understanding of the Python `re` module I suggest reading the offical [Regular Expression HOWTO](https://docs.python.org/3/howto/regex.html#regex-howto) tutorial or going straight to the [module documentation](https://docs.python.org/3/library/re.html).
+For a better understanding of the Python `re` module, I suggest reading the official [Regular Expression HOWTO](https://docs.python.org/3/howto/regex.html#regex-howto) tutorial or going straight to the [module documentation](https://docs.python.org/3/library/re.html).
 
 ## 🤷‍♂️ How To Use
 
@@ -23,7 +23,7 @@ RegEx Playground is split into two halves.
 ### Top Half ⬆️
 
 - Expression Input: This is where you enter a regular expression to test (including any flags). The results in the Text panel will update as you type.
-- Text Panel: This is where you enter text to test your expression against. You can paste text directly into the text area or load text via the command-line interface (CLI). Matches will be highlighted as you type.
+- Text Panel: This is where you enter text to test your expression against. You can paste text directly into the text area, load text from a file via the `CTRL+L` keybinding, or load text via the command-line interface (CLI). Matches will be highlighted as you type.
 
 ### Bottom Half ⬇️
 
@@ -38,7 +38,7 @@ RegEx Playground is split into two halves.
 
 ## ❌ How to QUIT
 
-Just use the keybinding "Ctrl+C" to quit the app at anytime.
+Just use the keybinding "Ctrl+C" to quit the app at any time.
 
 ## More Info
 
