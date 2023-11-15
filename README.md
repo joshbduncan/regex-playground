@@ -1,10 +1,10 @@
 # Python RegEx Playground
 
-Learn, Build, & Test Python Flavored Regular Expressions inside of your terminal. Simply enter some text into the input text area, enter a regular expression into the expression input, and watch your matches **light up**.
+Learn, Build, and test Python Flavored Regular Expressions inside of your terminal. Simply enter some text into the input text area, enter a regular expression into the expression input, and watch your matches **light up**.
 
 RegEx Playground supports most features of the Python `re` module. For a better understanding of the Python `re` module, I suggest reading the official [Regular Expression HOWTO](https://docs.python.org/3/howto/regex.html#regex-howto) tutorial or going straight to the [module documentation](https://docs.python.org/3/library/re.html).
 
-![regex-playground_v0 1 0](https://github.com/joshbduncan/regex-playground/assets/44387852/0818070e-d31f-486d-90b7-5f0b33c99244)
+![regex-playground_v0 1 0](https://github.com/joshbduncan/regex-playground/assets/44387852/f038ca92-01f4-4110-8a7e-0cb4c405b325)
 
 ## Features
 
