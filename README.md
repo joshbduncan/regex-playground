@@ -13,6 +13,7 @@ RegEx Playground supports most features of the Python `re` module. For a better 
 - ❨❩ Groups
 - 🌎 Global Matching
 - 💻 CLI
+- 📂 File Loading
 - 💾 Saving
 - 👍 & more...
 
@@ -77,9 +78,13 @@ options:
 Copyright 2023 Josh Duncan (joshbduncan.com)
 ```
 
+## 📂 File Loading
+
+You can load files from within the TUI using the "CTRL+L" keybinding while in the main text input area.
+
 ## 💾 Saving
 
-You can save the resulting text (after applying the substitution to your matches) via the `CTRL+S` keybinding.
+Save the resulting text (after applying the substitution to your matches) via the `CTRL+S` keybinding.
 
 ## Rabbit Holes
 
