@@ -1,8 +1,8 @@
 import re
 
 from textual.app import ComposeResult
+from textual.binding import Binding
 from textual.containers import Horizontal
-from textual.events import Click
 from textual.message import Message
 from textual.reactive import reactive
 from textual.widgets import Static
@@ -10,8 +10,10 @@ from textual.widgets import Static
 FLAG_PATTERN = re.compile(r"\(\?([a,i,L,m,s,u,x]*?)\)")
 
 
-class Flag(Static):
-    """A custom Static element with status coloring."""
+class Flag(Static, can_focus=True):  # type: ignore[call-arg]
+    """A custom button with status coloring."""
+
+    BINDINGS = [Binding("enter", "press", "Press Button", show=False)]
 
     status: reactive[bool] = reactive(False)
 
@@ -39,8 +41,12 @@ class Flag(Static):
             f"{self.long_name} ({self.letter})", id=self.long_name.replace(".", "-")
         )
 
-    def on_click(self, event: Click) -> None:
+    def on_click(self) -> None:
         """A `Flag` was clicked."""
+        self.post_message(self.Clicked(self.letter))
+
+    def action_press(self) -> None:
+        """Activate a press of the button."""
         self.post_message(self.Clicked(self.letter))
 
     def watch_status(self, _: str, new_status: str):

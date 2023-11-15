@@ -15,20 +15,26 @@ TextInput {
 Flags {
   height: auto;
   margin: 1 0;
-  padding-left: 2;
 }
 
 Flags > Static {
-  padding-right: 3;
+  margin: 0 1;
   width: auto;
 }
 
 #flags-label {
   color: $accent;
+  width: auto;
 }
 
-Flag.-active {
+Flags > Static:focus, Flags > Static:hover {
+  color: $secondary-darken-3;
+  text-style: bold;
+}
+
+Flags > Static:focus.-active, Flags > Static:hover.-active, Flag.-active {
   color: $secondary;
+  text-style: bold;
 }
 
 Flag.-inactive {
