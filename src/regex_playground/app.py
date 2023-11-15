@@ -200,9 +200,9 @@ class RegexPlayground(App[int]):
         flag_letter = message.letter
         regex_input = self.regex_input
         current_value = regex_input.value
-        matched_flags = FLAG_PATTERN.match(current_value)
-        if matched_flags:
-            flags = matched_flags.groups()[0]
+        current_flags = FLAG_PATTERN.match(current_value)
+        if current_flags:
+            flags = current_flags.groups()[0]
             updated_flags = (
                 flags.replace(flag_letter, "")
                 if flag_letter in flags
@@ -215,8 +215,6 @@ class RegexPlayground(App[int]):
             )
         else:
             new_value = f"(?{flag_letter}){current_value}"
-        if not new_value:
-            return
         regex_input.value = new_value
         regex_input.action_end()
 
