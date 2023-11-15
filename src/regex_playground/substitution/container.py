@@ -1,5 +1,7 @@
+from textual import on
 from textual.app import ComposeResult
 from textual.containers import Container
+from textual.events import DescendantBlur
 
 from ..text_inputs import TextResult
 from .substitution_input import SubstitutionInput, ValidSubstitutionRegex
@@ -16,3 +18,8 @@ class SubstitutionContainer(Container):
             id="substitution-input",
         )
         yield TextResult("", id="text-result")
+
+    @on(DescendantBlur, "#text-result")
+    def hide_cursor(self, event: DescendantBlur):
+        """Hide the input TextArea cursor when in blur state."""
+        event.widget.hide_cursor()  # type: ignore[attr-defined]

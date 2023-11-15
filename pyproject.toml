@@ -23,6 +23,20 @@ classifiers = [
 ]
 dependencies = ["rich==13.6.0", "textual==0.40.0"]
 
+[project.optional-dependencies]
+dev = [
+  "black",
+  "flake8",
+  "isort",
+  "mypy",
+  "pre-commit",
+  "pytest",
+  "pytest-asyncio",
+  "pytest-cov",
+  "textual-dev",
+]
+build = ["build", "twine"]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
@@ -31,12 +45,23 @@ regex-playground = "regex_playground.cli:main"
 
 # TOOL CONFIGURATION
 
-[tool.pytest.ini_options]
-addopts = "--cov=regex_playground"
-testpaths = ["tests"]
-
 [tool.coverage.run]
 omit = ["src/regex_playground/__main__.py"]
+
+[tool.black]
+line-length = 88
+exclude = '''
+/(
+    \.git
+  | \.mypy_cache
+  | venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
 
 [tool.mypy]
 mypy_path = "src"
@@ -52,32 +77,6 @@ warn_unreachable = true
 warn_unused_configs = true
 no_implicit_reexport = true
 
-[tool.ruff]
-exclude = [".venv"]
-select = ["I001"]
-extend-select = ["C4", "I", "SIM", "TCH", "UP"]
-
-src = ["src", "test"]
-show-fixes = true
-output-format = "grouped"
-line-length = 88
-
-target-version = "py311"
-
-[tool.ruff.lint]
-# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
-select = ["E4", "E7", "E9", "F"]
-ignore = []
-
-# Allow fix for all enabled rules (when `--fix`) is provided.
-fixable = ["ALL"]
-unfixable = []
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "auto"
-
-[tool.ruff.isort]
-known-local-folder = ["src"]
+[tool.pytest.ini_options]
+addopts = "--cov=regex_playground"
+testpaths = ["tests"]

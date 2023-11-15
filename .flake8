@@ -1,0 +1,7 @@
+[flake8]
+extend-ignore = E203
+max-line-length = 88
+per-file-ignores =
+    # line too long
+    src/regex_playground/screens/about_modal.py: E501,
+    src/regex_playground/screens/help_modal.py: E501,

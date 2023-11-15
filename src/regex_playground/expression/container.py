@@ -30,8 +30,7 @@ class ExpressionContainer(Container):
         msg = f"{message.count} matches" if message.count else ""
         matches_alert.update(msg)
 
-    @on(DescendantBlur, control="#text-input")
+    @on(DescendantBlur, "#text-input")
     def hide_cursor(self, event: DescendantBlur):
-        """Hide the input TextArea cursor with another widget is focused."""
-        text_input: TextInput = event.control  # type: ignore[assignment]
-        text_input.hide_cursor()
+        """Hide the input TextArea cursor when in blur state."""
+        event.widget.hide_cursor()  # type: ignore[attr-defined]

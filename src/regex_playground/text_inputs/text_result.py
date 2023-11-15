@@ -49,7 +49,8 @@ class TextResult(RegexTextArea):
         sub_str: str,
         global_match: bool,
     ) -> None:
-        """Apply substitutions and update highlighting with new regular expression strings.
+        """Apply substitutions and update highlighting with
+        new regular expression strings.
 
         Args:
             match_text: Original text to match on.

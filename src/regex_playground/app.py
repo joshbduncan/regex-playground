@@ -38,30 +38,6 @@ class RegexPlayground(App[int]):
         self._initial_notifications: list[Notification] = []
         super().__init__(*args, **kwargs)
 
-    #######################
-    # WIDGETS QUICK ACCESS#
-    #######################
-
-    @property
-    def regex_input(self) -> RegexInput:
-        """Quick access to the `RegexInput` widget."""
-        return self.query_one("#regex-input", RegexInput)  # type: ignore[no-any-return]
-
-    @property
-    def text_input(self) -> TextInput:
-        """Quick access to the `TextInput` widget."""
-        return self.query_one("#text-input", TextInput)  # type: ignore[no-any-return]
-
-    @property
-    def substitution_input(self) -> SubstitutionInput:
-        """Quick access to the `SubstitutionInput` widget."""
-        return self.query_one("#substitution-input", SubstitutionInput)  # type: ignore[no-any-return]
-
-    @property
-    def text_result(self) -> TextResult:
-        """Quick access to the `TextResult` widget."""
-        return self.query_one("#text-result", TextResult)  # type: ignore[no-any-return]
-
     @property
     def flags(self) -> Flags:
         """Quick access to the `Flags` widget."""
@@ -86,12 +62,15 @@ class RegexPlayground(App[int]):
     def on_mount(self) -> None:
         """Load text into the app."""
         if self._initial_text:
-            self.text_input.load_text(self._initial_text)
-            self.text_result.load_text(self._initial_text)
+            text_input = self.query_one("#text-input", TextInput)
+            text_result = self.query_one("#text-result", TextResult)
+            text_input.load_text(self._initial_text)
+            text_result.load_text(self._initial_text)
 
     def on_ready(self) -> None:
         """Set focus on the expression input and post any notifications."""
-        self.regex_input.focus()
+        regex_input = self.query_one("#regex-input", RegexInput)
+        regex_input.focus()
         for notification in self._initial_notifications:
             self.post_message(Notify(notification))
 
@@ -177,8 +156,10 @@ class RegexPlayground(App[int]):
 
     @on(TextArea.Changed, "#text-input")
     def update_text_areas(self, event: TextArea.Changed) -> None:
-        """Update `TextResult` text, highlighting, and substitutions after changes to `TextInput`."""
-        self.text_result.load_text(event.control.text)
+        """Update `TextResult` text, highlighting, and substitutions
+        after `TextInput` changes."""
+        text_result = self.query_one("#text-result", TextResult)
+        text_result.load_text(event.control.text)
         self.text_input_update()
         self.text_result_update()
 
@@ -189,8 +170,11 @@ class RegexPlayground(App[int]):
     @property
     def valid_regex_strings(self) -> bool:
         """Validate both `self.regex` and `self.substitution`. This is needed in cases
-        where the substitution method is fired by something other than `Input.Changed`."""
-        if not self.regex_input.is_valid or not self.substitution_input.is_valid:
+        where the substitution method is fired by something other than `Input.Changed`.
+        """
+        regex_input = self.query_one("#regex-input", RegexInput)
+        substitution_input = self.query_one("#substitution-input", SubstitutionInput)
+        if not regex_input.is_valid or not substitution_input.is_valid:
             return False
         return True
 
@@ -198,7 +182,7 @@ class RegexPlayground(App[int]):
     def clicked_flag(self, message: Flag.Clicked) -> None:
         """Update the regex string and ui when a flag is clicked"""
         flag_letter = message.letter
-        regex_input = self.regex_input
+        regex_input = self.query_one("#regex-input", RegexInput)
         current_value = regex_input.value
         current_flags = FLAG_PATTERN.match(current_value)
         if current_flags:
@@ -220,18 +204,22 @@ class RegexPlayground(App[int]):
 
     def flags_update(self) -> None:
         """Toggle the status of any flags found in the regular expression string."""
-        self.flags.update(self.regex)
+        flags = self.query_one("#flags", Flags)
+        flags.update(self.regex)
 
     def text_input_update(self) -> None:
         """Apply highlighting to `TextInput`."""
-        self.text_input.update(self.regex, self.global_match)
+        text_input = self.query_one("#text-input", TextInput)
+        text_input.update(self.regex, self.global_match)
 
     def text_result_update(self) -> None:
         """Apply substitutions and highlighting to `TextResult`."""
+        text_input = self.query_one("#text-input", TextInput)
+        text_result = self.query_one("#text-result", TextResult)
         if not self.valid_regex_strings:
-            self.text_result.load_text(self.text_input.text)
-        self.text_result.update(
-            self.text_input.text,
+            text_result.load_text(text_input.text)
+        text_result.update(
+            text_input.text,
             self.regex,
             self.substitution,
             self.global_match,
@@ -245,7 +233,8 @@ class RegexPlayground(App[int]):
             "Input Text Updated",
         )
         self.load_text(message.control.text, notification)
-        self.text_result.reset_highlighting()
+        text_result = self.query_one("#text-result", TextResult)
+        text_result.reset_highlighting()
 
     #############################
     # KEYBINDING ACTION METHODS #
