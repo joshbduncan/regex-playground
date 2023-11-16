@@ -2,7 +2,7 @@ from textual import on
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal
 from textual.events import DescendantBlur
-from textual.widgets import Static
+from textual.widgets import Label
 
 from ..text_inputs import TextInput
 from .flags import Flags
@@ -20,13 +20,13 @@ class ExpressionContainer(Container):
                 validators=ValidRegex(),
                 id="regex-input",
             )
-            yield Static("", id="matches-alert")
+            yield Label("", id="matches-alert")
         yield Flags(id="flags")
         yield TextInput(id="text-input")
 
     @on(TextInput.MatchesFound)
     def updated_substitutions_alert(self, message: TextInput.MatchesFound) -> None:
-        matches_alert = self.query_one("#matches-alert", Static)
+        matches_alert = self.query_one("#matches-alert", Label)
         msg = f"{message.count} matches" if message.count else ""
         matches_alert.update(msg)
 

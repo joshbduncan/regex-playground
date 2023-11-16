@@ -94,3 +94,4 @@ Please know, Regular Expressions can be a deep, deep rabbit hole. If you find so
 
 - [Textual](https://github.com/Textualize/textual)
 - [Python Regular Expressions](https://docs.python.org/3/library/re.html)
+- [textual-fspicker](https://github.com/davep/textual-fspicker)

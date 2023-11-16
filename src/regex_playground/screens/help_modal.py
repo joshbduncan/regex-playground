@@ -65,7 +65,7 @@ class HelpModal(ModalScreen[None]):
     @on(Button.Pressed)
     def action_dismiss_modal(self) -> None:
         """Dismiss the modal."""
-        self.dismiss(None)
+        self.app.pop_screen()
 
     @on(Markdown.LinkClicked)
     def visit_link(self, event: Markdown.LinkClicked) -> None:

@@ -5,7 +5,7 @@ from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Center, Vertical
 from textual.screen import ModalScreen
-from textual.widgets import Button, Static
+from textual.widgets import Button, Label
 
 
 class AboutModal(ModalScreen[None]):
@@ -23,10 +23,10 @@ class AboutModal(ModalScreen[None]):
 
         with Vertical():
             with Center():
-                yield Static(
+                yield Label(
                     f"RegEx Playground [b dim]v{version('regex_playground')}", id="app"
                 )
-            yield Static(message, id="message")
+            yield Label(message, id="message")
             with Center():
                 yield Button("OK", variant="primary")
 

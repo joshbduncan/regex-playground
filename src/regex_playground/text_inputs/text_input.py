@@ -1,4 +1,5 @@
 import re
+from dataclasses import dataclass
 from pathlib import Path
 
 from textual import work
@@ -20,19 +21,23 @@ class TextInput(RegexTextArea):
 
     HIGHLIGHT_NAME = "match"
 
+    @dataclass
+    class Clicked(Message):
+        """Posted when the user clicks a flag to toggle it."""
+
+        letter: str  # re shortcode letter for the clicked Flag.
+
+    @dataclass
     class NewFile(Message):
         """Posted when a new file should be loaded."""
 
-        def __init__(self, path: Path) -> None:
-            self.path = path
-            super().__init__()
+        path: Path
 
+    @dataclass
     class MatchesFound(Message):
         """Posted when successful matches are found."""
 
-        def __init__(self, count: int) -> None:
-            self.count = count
-            super().__init__()
+        count: int
 
     @work(exclusive=True)
     async def action_load_file(self) -> None:

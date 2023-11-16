@@ -1,33 +1,31 @@
 import re
+from dataclasses import dataclass
 
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal
 from textual.message import Message
 from textual.reactive import reactive
-from textual.widgets import Static
+from textual.widgets import Label
 
 FLAG_PATTERN = re.compile(r"\(\?([a,i,L,m,s,u,x]*?)\)")
 
 
-class Flag(Static, can_focus=True):  # type: ignore[call-arg]
+class Flag(Label, can_focus=True):  # type: ignore[call-arg]
     """A custom button with status coloring."""
 
     BINDINGS = [Binding("enter", "press", "Press Button", show=False)]
 
     status: reactive[bool] = reactive(False)
 
+    @dataclass
     class Clicked(Message):
         """Posted when the user clicks a flag to toggle it."""
 
-        letter: str
-
-        def __init__(self, letter: str) -> None:
-            self.letter = letter
-            super().__init__()
+        letter: str  # re shortcode letter for the clicked Flag.
 
     def __init__(self, long_name: str, short_name: str, letter: str) -> None:
-        """Initialize a Flag (Static) widget.
+        """Initialize a Flag (Label) widget.
 
         Args:
             long_name: Regular expression flag long name.
@@ -68,7 +66,7 @@ class Flags(Horizontal):
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the container."""
-        yield Static("🚩 Flags:", id="flags-label")
+        yield Label("🚩 Flags:", id="flags-label")
         yield from self.RE_FLAGS.values()
 
     def update(self, regex_str: str) -> None:

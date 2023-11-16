@@ -235,16 +235,11 @@ class RegexPlayground(App[int]):
     @on(TextResult.ResetInputWithResult)
     def reset_input_with_result(self, message: TextResult.ResetInputWithResult) -> None:
         """Reset the contents of `TextInput` with the contents of `TextResult`."""
-        text_input = self.query_one("#text-input", TextInput)
-        if message.control.text == text_input.text:
-            return
         notification = Notification(
             "Result text was successfully loaded.",
             "Input Text Updated",
         )
-        self.load_text(message.control.text, notification)
-        text_result = self.query_one("#text-result", TextResult)
-        text_result.reset_highlighting()
+        self.load_text(message.text, notification)
 
     #############################
     # KEYBINDING ACTION METHODS #
