@@ -63,13 +63,10 @@ class TextInput(RegexTextArea):
         """Clear the text area."""
         self.clear()
 
-    def update(self, regex_str: str, global_match: bool) -> None:
-        """Update matches and highlighting with a new regular expression string.
-
-        Args:
-            regex_str: Regular expression string.
-            global_match: Should all matches be highlighted.
-        """
+    def update(self) -> None:
+        """Update matches and highlighting."""
+        regex_str = self.app.regex  # type: ignore[attr-defined]
+        global_match = self.app.global_match  # type: ignore[attr-defined]
         if not regex_str or not re.sub(FLAG_PATTERN, "", regex_str):
             self.reset_highlighting()
             self.post_message(self.MatchesFound(0))

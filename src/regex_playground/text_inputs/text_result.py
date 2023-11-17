@@ -10,6 +10,7 @@ from textual_fspicker import FileSave
 from ..expression.flags import FLAG_PATTERN
 from ..screens.overwrite import OverwriteModal
 from .custom_text_area import RegexTextArea
+from .text_input import TextInput
 
 
 class TextResult(RegexTextArea):
@@ -33,23 +34,19 @@ class TextResult(RegexTextArea):
         """Block all key input within this TextArea."""
         event.prevent_default()
 
-    def update(
-        self,
-        match_text: str,
-        regex_str: str,
-        sub_str: str,
-        global_match: bool,
-    ) -> None:
-        """Apply substitutions and update highlighting with
-        new regular expression strings.
-
-        Args:
-            match_text: Original text to match on.
-            regex_str: Regular expression string.
-            sub_str: Expression string to use for substitution.
-            global_match: Should all matches be highlighted.
-        """
-        if not regex_str or not sub_str or not re.sub(FLAG_PATTERN, "", regex_str):
+    def update(self) -> None:
+        """Apply substitutions and update highlighting."""
+        match_text = self.app.query_one("#text-input", TextInput).text
+        regex_str = self.app.regex  # type: ignore[attr-defined]
+        sub_str = self.app.substitution  # type: ignore[attr-defined]
+        global_match = self.app.global_match  # type: ignore[attr-defined]
+        valid_regex_strings = self.app.valid_regex_strings  # type: ignore[attr-defined]
+        if (
+            not valid_regex_strings
+            or not regex_str
+            or not sub_str
+            or not re.sub(FLAG_PATTERN, "", regex_str)
+        ):
             self.load_text(match_text)
             return
         pattern = re.compile(regex_str)

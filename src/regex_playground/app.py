@@ -38,11 +38,6 @@ class RegexPlayground(App[int]):
         self._initial_notifications: list[Notification] = []
         super().__init__(*args, **kwargs)
 
-    @property
-    def flags(self) -> Flags:
-        """Quick access to the `Flags` widget."""
-        return self.query_one("#flags", Flags)  # type: ignore[no-any-return]
-
     #########################
     # TUI SETUP AND STARTUP #
     #########################
@@ -78,23 +73,29 @@ class RegexPlayground(App[int]):
     # WATCH METHODS #
     #################
 
-    def watch_regex(self) -> None:
+    def watch_regex(self, _: str, new_value: str) -> None:
         """Regular expression string updated."""
-        self.log(f"regular expression updated: {self.regex=}")
-        self.flags_update()
-        self.text_input_update()
-        self.text_result_update()
+        self.log(f"regular expression updated: {new_value=}")
+        flags = self.query_one("#flags", Flags)
+        text_input = self.query_one("#text-input", TextInput)
+        text_result = self.query_one("#text-result", TextResult)
+        flags.regex = new_value
+        text_input.update()
+        text_result.update()
 
-    def watch_substitution(self) -> None:
+    def watch_substitution(self, _: str, new_value: str) -> None:
         """Regular expression substitution string updated."""
-        self.log(f"substitution expression updated: {self.substitution=}")
-        self.text_result_update()
+        self.log(f"substitution expression updated: {new_value=}")
+        text_result = self.query_one("#text-result", TextResult)
+        text_result.update()
 
-    def watch_global_match(self) -> None:
+    def watch_global_match(self, _: bool, new_value: bool) -> None:
         """Global match toggled."""
-        self.log(f"global match updated: {self.global_match=}")
-        self.text_input_update()
-        self.text_result_update()
+        self.log(f"global match updated: {new_value=}")
+        text_input = self.query_one("#text-input", TextInput)
+        text_result = self.query_one("#text-result", TextResult)
+        text_input.update()
+        text_result.update()
 
     ############################
     # EXPRESSION INPUT METHODS #
@@ -165,10 +166,11 @@ class RegexPlayground(App[int]):
     def update_text_areas(self, event: TextArea.Changed) -> None:
         """Update `TextResult` text, highlighting, and substitutions
         after `TextInput` changes."""
+        text_input = self.query_one("#text-input", TextInput)
         text_result = self.query_one("#text-result", TextResult)
+        text_input.update()
         text_result.load_text(event.control.text)
-        self.text_input_update()
-        self.text_result_update()
+        text_result.update()
 
     ##################################
     # REGEX AND HIGHLIGHTING METHODS #
@@ -208,29 +210,6 @@ class RegexPlayground(App[int]):
             new_value = f"(?{flag_letter}){current_value}"
         regex_input.value = new_value
         regex_input.action_end()
-
-    def flags_update(self) -> None:
-        """Toggle the status of any flags found in the regular expression string."""
-        flags = self.query_one("#flags", Flags)
-        flags.update(self.regex)
-
-    def text_input_update(self) -> None:
-        """Apply highlighting to `TextInput`."""
-        text_input = self.query_one("#text-input", TextInput)
-        text_input.update(self.regex, self.global_match)
-
-    def text_result_update(self) -> None:
-        """Apply substitutions and highlighting to `TextResult`."""
-        text_input = self.query_one("#text-input", TextInput)
-        text_result = self.query_one("#text-result", TextResult)
-        if not self.valid_regex_strings:
-            text_result.load_text(text_input.text)
-        text_result.update(
-            text_input.text,
-            self.regex,
-            self.substitution,
-            self.global_match,
-        )
 
     @on(TextResult.ResetInputWithResult)
     def reset_input_with_result(self, message: TextResult.ResetInputWithResult) -> None:

@@ -56,6 +56,8 @@ class Flag(Label, can_focus=True):  # type: ignore[call-arg]
 class Flags(Horizontal):
     """A custom container for the regular expression flag labels."""
 
+    regex: reactive[str] = reactive("", init=False)
+
     RE_FLAGS = {
         "re.ASCII": Flag(long_name="re.ASCII", short_name="re.A", letter="a"),
         "re.IGNORECASE": Flag(long_name="re.IGNORECASE", short_name="re.I", letter="i"),
@@ -69,13 +71,9 @@ class Flags(Horizontal):
         yield Label("🚩 Flags:", id="flags-label")
         yield from self.RE_FLAGS.values()
 
-    def update(self, regex_str: str) -> None:
-        """Update status for each flag.
-
-        Args:
-            regex_str: Regular expression string.
-        """
-        matched_flags = FLAG_PATTERN.match(regex_str)
+    def watch_regex(self, _: str, new_value: str):
+        """Update status for any flags."""
+        matched_flags = FLAG_PATTERN.match(new_value)
         for flag in self.RE_FLAGS.values():
             if matched_flags is None or flag.letter not in matched_flags.group():
                 flag.status = False
