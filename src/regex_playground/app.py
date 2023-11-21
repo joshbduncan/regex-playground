@@ -6,6 +6,7 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.notifications import Notification, Notify
 from textual.reactive import reactive
+from textual.validation import ValidationResult
 from textual.widgets import Footer, Header, Input, Rule, TextArea
 
 from .expression import ExpressionContainer, Flags, RegexInput
@@ -103,19 +104,41 @@ class RegexPlayground(App[int]):
 
     @on(Input.Changed, "#regex-input")
     @on(Input.Changed, "#substitution-input")
-    def process_expression_input(self, event: Input.Changed) -> None:
+    def process_expression_inputs(self, event: Input.Changed) -> None:
         """Update the regular expression strings or alert if not valid."""
+        regex_input = self.query_one("#regex-input", RegexInput)
+        substitution_input = self.query_one("#substitution-input", SubstitutionInput)
+
+        #  Fir proper tui updates, I have to validate both inputs on a change to either
         widget = event.control
-        tooltip = None
-        value = event.value
-        if event.validation_result and not event.validation_result.is_valid:
-            tooltip = event.validation_result.failure_descriptions[-1]
+        if widget.id == "regex-input":
+            self.regex = self.process_input_validation_result(
+                widget, event.validation_result
+            )
+            self.substitution = self.process_input_validation_result(
+                substitution_input,
+                substitution_input.validate(substitution_input.value),
+            )
+        else:
+            self.substitution = self.process_input_validation_result(
+                widget, event.validation_result
+            )
+            self.regex = self.process_input_validation_result(
+                regex_input,
+                regex_input.validate(regex_input.value),
+            )
+
+    @staticmethod
+    def process_input_validation_result(
+        widget: Input, validation_result: ValidationResult | None
+    ) -> str:
+        value = widget.value or ""
+        tooltip = ""
+        if validation_result and not validation_result.is_valid:
+            tooltip = validation_result.failure_descriptions[-1]
             value = ""
         widget.tooltip = tooltip
-        if widget.id == "regex-input":
-            self.regex = value
-        else:
-            self.substitution = value
+        return value
 
     ###########################
     # TEXT AREA INPUT METHODS #
