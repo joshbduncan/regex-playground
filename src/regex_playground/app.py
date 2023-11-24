@@ -27,7 +27,6 @@ class RegexPlayground(App[int]):
         Binding("ctrl+g", "global_match", "Global Toggle"),
     ]
 
-    text: reactive[str] = reactive("", init=False)
     regex: reactive[str] = reactive("", init=False)
     substitution: reactive[str] = reactive("", init=False)
     global_match: reactive[bool] = reactive(True, init=False)
@@ -61,7 +60,7 @@ class RegexPlayground(App[int]):
             text_input = self.query_one("#text-input", TextInput)
             text_result = self.query_one("#text-result", TextResult)
             text_input.load_text(self._initial_text)
-            text_result.load_text(self._initial_text)
+            text_result.load_text(self._initial_text, True)
 
     def on_ready(self) -> None:
         """Set focus on the expression input and post any notifications."""
@@ -80,23 +79,20 @@ class RegexPlayground(App[int]):
         flags = self.query_one("#flags", Flags)
         text_input = self.query_one("#text-input", TextInput)
         text_result = self.query_one("#text-result", TextResult)
-        flags.regex = new_value
-        text_input.update()
-        text_result.update()
+        flags.regex = text_input.regex = text_result.regex = new_value
 
     def watch_substitution(self, _: str, new_value: str) -> None:
         """Regular expression substitution string updated."""
         self.log(f"substitution expression updated: {new_value=}")
         text_result = self.query_one("#text-result", TextResult)
-        text_result.update()
+        text_result.substitution = new_value
 
     def watch_global_match(self, _: bool, new_value: bool) -> None:
         """Global match toggled."""
         self.log(f"global match updated: {new_value=}")
         text_input = self.query_one("#text-input", TextInput)
         text_result = self.query_one("#text-result", TextResult)
-        text_input.update()
-        text_result.update()
+        text_input.global_match = text_result.global_match = new_value
 
     ############################
     # EXPRESSION INPUT METHODS #
@@ -133,7 +129,7 @@ class RegexPlayground(App[int]):
         widget: Input, validation_result: ValidationResult | None
     ) -> str:
         value = widget.value or ""
-        tooltip = ""
+        tooltip = None
         if validation_result and not validation_result.is_valid:
             tooltip = validation_result.failure_descriptions[-1]
             value = ""
@@ -157,7 +153,7 @@ class RegexPlayground(App[int]):
             if text == text_input.text:
                 return
             text_input.load_text(text)
-            text_result.load_text(text)
+            text_result.load_text(text, True)
 
             if notification:
                 self.post_message(Notify(notification))
@@ -186,14 +182,10 @@ class RegexPlayground(App[int]):
         self.load_file(message.path)
 
     @on(TextArea.Changed, "#text-input")
-    def update_text_areas(self, event: TextArea.Changed) -> None:
-        """Update `TextResult` text, highlighting, and substitutions
-        after `TextInput` changes."""
-        text_input = self.query_one("#text-input", TextInput)
+    def update_text_result_with_changes(self, event: TextArea.Changed) -> None:
+        """Update `TextResult` text with changes from `TextInput`."""
         text_result = self.query_one("#text-result", TextResult)
-        text_input.update()
-        text_result.load_text(event.control.text)
-        text_result.update()
+        text_result.load_text(event.control.text, True)
 
     ##################################
     # REGEX AND HIGHLIGHTING METHODS #

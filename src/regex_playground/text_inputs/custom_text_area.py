@@ -1,6 +1,7 @@
 import re
 from collections.abc import Iterator
 
+from textual.reactive import reactive
 from textual.widgets import TextArea
 
 from ..renode import ReNode
@@ -12,10 +13,21 @@ class RegexTextArea(TextArea):
 
     HIGHLIGHT_NAME: str = ""
 
+    regex: reactive[str] = reactive("", init=False)
+    global_match: reactive[bool] = reactive(True, init=False)
+
     def on_mount(self) -> None:
         """Actions to take when the widget is mounted within the app."""
         self.setup_theme()
         self.hide_cursor()
+
+    def watch_regex(self, _: str, new_value: str) -> None:
+        """Regular expression string updated."""
+        self.update()
+
+    def watch_global_match(self, _: str, new_value: str) -> None:
+        """Regular expression string updated."""
+        self.update()
 
     def setup_theme(self) -> None:
         """Register the custom text area theme and make it active."""
@@ -27,6 +39,10 @@ class RegexTextArea(TextArea):
         self._cursor_blink_visible = False
         cursor_row, _ = self.cursor_location
         self.refresh_lines(cursor_row)
+
+    def update(self) -> None:
+        """Update matches and highlighting (define in subclass)."""
+        pass
 
     def apply_highlighting(self, nodes: list[ReNode], global_match: bool) -> None:
         """Apply highlighting to regular expression matches inside of the TextArea.

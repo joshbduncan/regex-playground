@@ -5,12 +5,12 @@ from textual import on, work
 from textual.binding import Binding
 from textual.events import Key
 from textual.message import Message
+from textual.reactive import reactive
 from textual_fspicker import FileSave
 
 from ..expression.flags import FLAG_PATTERN
 from ..screens.overwrite import OverwriteModal
 from .custom_text_area import RegexTextArea
-from .text_input import TextInput
 
 
 class TextResult(RegexTextArea):
@@ -23,6 +23,9 @@ class TextResult(RegexTextArea):
 
     HIGHLIGHT_NAME = "sub"
 
+    match_text: reactive[str] = reactive("", init=False)
+    substitution: reactive[str] = reactive("", init=False)
+
     @dataclass
     class ResetInputWithResult(Message):
         """Posted when the user request to reset the input text to the result text."""
@@ -34,27 +37,44 @@ class TextResult(RegexTextArea):
         """Block all key input within this TextArea."""
         event.prevent_default()
 
+    def load_text(self, text: str, update_match_text: bool = False) -> None:
+        """Load text into the TextArea and set the match text.
+
+        Args:
+            text: The text to load into the TextArea.
+            update_match_text: Should the match text be updated?
+        """
+        if update_match_text:
+            self.match_text = text
+        super().load_text(text)
+
+    def watch_match_text(self) -> None:
+        """Match text updated."""
+        self.update()
+
+    def watch_substitution(self, _: str, new_value: str) -> None:
+        """Regular expression substitution string updated."""
+        self.log(f"🚨🚨🚨🚨🚨🚨 {_=}, {new_value=}")
+        self.update()
+
     def update(self) -> None:
         """Apply substitutions and update highlighting."""
-        match_text = self.app.query_one("#text-input", TextInput).text
-        regex_str = self.app.regex  # type: ignore[attr-defined]
-        sub_str = self.app.substitution  # type: ignore[attr-defined]
-        global_match = self.app.global_match  # type: ignore[attr-defined]
-        valid_regex_strings = self.app.valid_regex_strings  # type: ignore[attr-defined]
         if (
-            not valid_regex_strings
-            or not regex_str
-            or not sub_str
-            or not re.sub(FLAG_PATTERN, "", regex_str)
+            not self.app.valid_regex_strings  # type: ignore[attr-defined]
+            or not self.regex
+            or not self.substitution
+            or not re.sub(FLAG_PATTERN, "", self.regex)
         ):
-            self.load_text(match_text)
+            self.load_text(self.match_text, True)
             return
-        pattern = re.compile(regex_str)
-        new_text = pattern.sub(sub_str, match_text, count=0 if global_match else 1)
+        pattern = re.compile(self.regex)
+        new_text = pattern.sub(
+            self.substitution, self.match_text, count=0 if self.global_match else 1
+        )
         self.load_text(new_text)
-        matches = pattern.finditer(match_text)
-        nodes = self.matches_to_faux_nodes(matches, sub_str)
-        self.apply_highlighting(nodes, global_match)
+        matches = pattern.finditer(self.match_text)
+        nodes = self.matches_to_faux_nodes(matches, self.substitution)
+        self.apply_highlighting(nodes, self.global_match)
 
     def action_load_as_input(self) -> None:
         """Set the input text to the current result text."""

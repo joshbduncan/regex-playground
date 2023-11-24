@@ -2,9 +2,10 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-from textual import work
+from textual import on, work
 from textual.binding import Binding
 from textual.message import Message
+from textual.widgets import TextArea
 from textual_fspicker import FileOpen
 
 from ..expression.flags import FLAG_PATTERN
@@ -63,16 +64,15 @@ class TextInput(RegexTextArea):
         """Clear the text area."""
         self.clear()
 
+    @on(TextArea.Changed)
     def update(self) -> None:
         """Update matches and highlighting."""
-        regex_str = self.app.regex  # type: ignore[attr-defined]
-        global_match = self.app.global_match  # type: ignore[attr-defined]
-        if not regex_str or not re.sub(FLAG_PATTERN, "", regex_str):
+        if not self.regex or not re.sub(FLAG_PATTERN, "", self.regex):
             self.reset_highlighting()
             self.post_message(self.MatchesFound(0))
             return
-        pattern = re.compile(regex_str)
+        pattern = re.compile(self.regex)
         matches = pattern.finditer(self.text)
         nodes = self.matches_to_faux_nodes(matches)
-        self.apply_highlighting(nodes, global_match)
+        self.apply_highlighting(nodes, self.global_match)
         self.post_message(self.MatchesFound(len(nodes)))
