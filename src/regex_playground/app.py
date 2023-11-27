@@ -155,6 +155,9 @@ class RegexPlayground(App[int]):
             text_input.load_text(text)
             text_result.load_text(text, True)
 
+            text_input.update()
+            text_result.update()
+
             if notification:
                 self.post_message(Notify(notification))
         else:
@@ -190,17 +193,6 @@ class RegexPlayground(App[int]):
     ##################################
     # REGEX AND HIGHLIGHTING METHODS #
     ##################################
-
-    @property
-    def valid_regex_strings(self) -> bool:
-        """Validate both `self.regex` and `self.substitution`. This is needed in cases
-        where the substitution method is fired by something other than `Input.Changed`.
-        """
-        regex_input = self.query_one("#regex-input", RegexInput)
-        substitution_input = self.query_one("#substitution-input", SubstitutionInput)
-        if not regex_input.is_valid or not substitution_input.is_valid:
-            return False
-        return True
 
     @on(Flag.Clicked)
     def clicked_flag(self, message: Flag.Clicked) -> None:

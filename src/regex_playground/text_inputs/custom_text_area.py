@@ -63,8 +63,6 @@ class RegexTextArea(TextArea):
             node_start_row, node_start_column = node.start_point
             node_end_row, node_end_column = node.end_point
 
-            self.log(f"highlighting {node=}")
-
             if node_start_row == node_end_row:
                 highlight = (node_start_column, node_end_column, self.HIGHLIGHT_NAME)
                 highlights[node_start_row].append(highlight)

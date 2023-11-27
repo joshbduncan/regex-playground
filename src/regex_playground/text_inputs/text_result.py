@@ -54,14 +54,12 @@ class TextResult(RegexTextArea):
 
     def watch_substitution(self, _: str, new_value: str) -> None:
         """Regular expression substitution string updated."""
-        self.log(f"🚨🚨🚨🚨🚨🚨 {_=}, {new_value=}")
         self.update()
 
     def update(self) -> None:
         """Apply substitutions and update highlighting."""
         if (
-            not self.app.valid_regex_strings  # type: ignore[attr-defined]
-            or not self.regex
+            not self.regex
             or not self.substitution
             or not re.sub(FLAG_PATTERN, "", self.regex)
         ):
