@@ -28,7 +28,7 @@ Flags {
   margin: 1 0;
 }
 
-Flags Label {
+Flags > Label {
   margin: 0 1;
   width: auto;
 }
@@ -38,12 +38,12 @@ Flags Label {
   width: auto;
 }
 
-Flags Label:focus, Flags Label:hover {
+Flags > Label:focus, Flags > Label:hover {
   color: $secondary-darken-3;
   text-style: bold;
 }
 
-Flags Label:focus.-active, Flags Label:hover.-active, Flag.-active {
+Flags > Label:focus.-active, Flags > Label:hover.-active, Flag.-active {
   color: $secondary;
   text-style: bold;
 }
@@ -79,19 +79,19 @@ HelpModal {
   align: center middle;
 }
 
-HelpModal Vertical {
+HelpModal > Vertical {
   background: $boost;
   border: thick $primary 50%;
   height: 80%;
   width: 80%;
 }
 
-HelpModal Vertical VerticalScroll {
+HelpModal > Vertical > VerticalScroll {
   height: 1fr;
   margin: 1 2;
 }
 
-HelpModal Vertical Center {
+HelpModal > Vertical > Center {
   height: auto;
   padding: 1;
 }
@@ -108,7 +108,7 @@ AboutModal Center {
   width: 100%;
 }
 
-AboutModal Vertical {
+AboutModal > Vertical {
   background: $boost;
   border: thick $primary 50%;
   height: auto;
@@ -120,7 +120,7 @@ AboutModal Label {
   width: auto;
 }
 
-AboutModal Label#app, Label#message {
+AboutModal Label#title, Label#message {
   padding: 1 4;
 }
 
@@ -162,7 +162,7 @@ OverwriteModal Label {
   width: auto;
 }
 
-OverwriteModal Label#app, Label#message {
+OverwriteModal Label#title, Label#message {
   padding: 1 4;
 }
 

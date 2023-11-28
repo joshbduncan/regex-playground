@@ -16,16 +16,16 @@ RegEx Playground supports most features of the Python `re` module like ⭐️ Me
 
 For a better understanding of the Python `re` module, I suggest reading the official [Regular Expression HOWTO](https://docs.python.org/3/howto/regex.html#regex-howto) tutorial or going straight to the [module documentation](https://docs.python.org/3/library/re.html).
 
-## 🤷‍♂️ How To Use
+## How To Use
 
 RegEx Playground is split into two halves.
 
-### Top Half ⬆️
+### Top Half ⬆
 
 - Expression Input: This is where you enter a regular expression to test (including any flags). The results in the Text panel will update as you type.
 - Text Panel: This is where you enter text to test your expression against. You can paste text directly into the text area, load text from a file via the `CTRL+L` keybinding, or load text via the command-line interface (CLI). Matches will be highlighted as you type.
 
-### Bottom Half ⬇️
+### Bottom Half ⬇
 
 - Substitution Input: This is where you enter a regular expression substitution to go with your expression. The results in the Result panel will update as you type.
 - Result Panel: This is where the resulting text (after substitution) is displayed.
@@ -36,7 +36,7 @@ RegEx Playground is split into two halves.
 - Result as Input: Want to performance multiple operations on your text? Use `Ctrl+R` to reset the Text Panel with the text from the Result Panel.
 - Saving: You can save the resulting text (after applying the substitution to your matches) via the `CTRL+S` keybinding. You must select the Result text area for this keybinding to be available.
 
-## ❌ How to QUIT
+## How to QUIT
 
 Just use the keybinding "Ctrl+C" to quit the app at any time.
 

@@ -24,7 +24,8 @@ class AboutModal(ModalScreen[None]):
         with Vertical():
             with Center():
                 yield Label(
-                    f"RegEx Playground [b dim]v{version('regex_playground')}", id="app"
+                    f"RegEx Playground [b dim]v{version('regex_playground')}",
+                    id="title",
                 )
             yield Label(message, id="message")
             with Center():

@@ -23,7 +23,7 @@ class OverwriteModal(ModalScreen[bool]):
         """Compose the content of the modal dialog."""
         with Vertical():
             with Center():
-                yield Label("Overwrite File")
+                yield Label("Overwrite File", id="title")
             yield Label(
                 f"File {self.path.name} already exist. Overwrite it?",
                 id="message",
