@@ -26,6 +26,7 @@ class RegexPlayground(App[int]):
         Binding("f2", "about", "About"),
         Binding("ctrl+g", "global_match", "Global Toggle"),
     ]
+    AUTO_FOCUS = "#regex-input"
 
     regex: reactive[str] = reactive("", init=False)
     substitution: reactive[str] = reactive("", init=False)
@@ -63,9 +64,7 @@ class RegexPlayground(App[int]):
             text_result.load_text(self._initial_text, True)
 
     def on_ready(self) -> None:
-        """Set focus on the expression input and post any notifications."""
-        regex_input = self.query_one("#regex-input", RegexInput)
-        regex_input.focus()
+        """Show any notifications."""
         for notification in self._initial_notifications:
             self.post_message(Notify(notification))
 
