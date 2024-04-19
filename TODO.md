@@ -8,6 +8,7 @@ The format is based on [TODO.md](https://github.com/todomd/todo.md)
 
 - [ ] add tests  
 - [ ] fix issue where input messages beat others and input validation doesn't stop the substitution  
+- [ ] fix replace for empty string  
 
 ### Doing
 

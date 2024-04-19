@@ -18,6 +18,7 @@ class TextResult(RegexTextArea):
 
     BINDINGS = [
         Binding("ctrl+r", "load_as_input", "Reset As Input", priority=True),
+        Binding("ctrl+x", "copy", "Copy Result", priority=True),
         Binding("ctrl+s", "save", "Save Result", priority=True),
     ]
 
@@ -77,6 +78,20 @@ class TextResult(RegexTextArea):
     def action_load_as_input(self) -> None:
         """Set the input text to the current result text."""
         self.post_message(self.ResetInputWithResult(self.text))
+
+    def action_copy(self) -> None:
+        """Copy the result text to the system clipboard."""
+        if not self.text:
+            self.notify(
+                "There is no text to copy.", title="Nothing To Copy", severity="warning"
+            )
+            return
+        self.app.copy_to_clipboard(self.text)
+        self.notify(
+            "Result text copied to the system clipboard.",
+            title="Text Copied",
+            severity="information",
+        )
 
     @work(exclusive=True)
     async def action_save(self) -> None:
